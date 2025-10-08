@@ -26,6 +26,9 @@ interface Question {
   answer_d: string;
   correct_answer: string;
   explanation: string;
+  question_type: string;
+  question_image_url?: string;
+  category?: string;
 }
 
 const Admin = () => {
@@ -43,6 +46,9 @@ const Admin = () => {
   
   // Question form
   const [questionText, setQuestionText] = useState("");
+  const [questionType, setQuestionType] = useState<"multiple_choice" | "text_input">("multiple_choice");
+  const [category, setCategory] = useState("");
+  const [questionImageUrl, setQuestionImageUrl] = useState("");
   const [answerA, setAnswerA] = useState("");
   const [answerB, setAnswerB] = useState("");
   const [answerC, setAnswerC] = useState("");
@@ -170,18 +176,34 @@ const Admin = () => {
       return;
     }
 
+    const questionData: any = {
+      game_id: selectedGameId,
+      question_text: questionText,
+      question_type: questionType,
+      correct_answer: correctAnswer,
+      explanation: explanation,
+    };
+
+    if (category) questionData.category = category;
+    if (questionImageUrl) questionData.question_image_url = questionImageUrl;
+
+    // For multiple choice, include all answers
+    if (questionType === "multiple_choice") {
+      questionData.answer_a = answerA;
+      questionData.answer_b = answerB;
+      questionData.answer_c = answerC;
+      questionData.answer_d = answerD;
+    } else {
+      // For text input, just use empty strings for unused fields
+      questionData.answer_a = "";
+      questionData.answer_b = "";
+      questionData.answer_c = "";
+      questionData.answer_d = "";
+    }
+
     const { error } = await supabase
       .from("questions")
-      .insert({
-        game_id: selectedGameId,
-        question_text: questionText,
-        answer_a: answerA,
-        answer_b: answerB,
-        answer_c: answerC,
-        answer_d: answerD,
-        correct_answer: correctAnswer,
-        explanation: explanation,
-      });
+      .insert(questionData);
 
     if (error) {
       toast.error("Failed to create question");
@@ -190,6 +212,9 @@ const Admin = () => {
 
     toast.success("Question created successfully");
     setQuestionText("");
+    setQuestionType("multiple_choice");
+    setCategory("");
+    setQuestionImageUrl("");
     setAnswerA("");
     setAnswerB("");
     setAnswerC("");
@@ -359,6 +384,29 @@ const Admin = () => {
                 <h2 className="text-2xl font-bold mb-4">Create New Question</h2>
                 <form onSubmit={handleCreateQuestion} className="space-y-4">
                   <div className="space-y-2">
+                    <Label htmlFor="question-type">Question Type</Label>
+                    <select
+                      id="question-type"
+                      className="w-full p-2 bg-background border border-border rounded-md"
+                      value={questionType}
+                      onChange={(e) => setQuestionType(e.target.value as "multiple_choice" | "text_input")}
+                    >
+                      <option value="multiple_choice">Multiple Choice</option>
+                      <option value="text_input">Text Input</option>
+                    </select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category (optional)</Label>
+                    <Input
+                      id="category"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      placeholder="e.g., History, Science"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
                     <Label htmlFor="question">Question</Label>
                     <Textarea
                       id="question"
@@ -367,64 +415,97 @@ const Admin = () => {
                       required
                     />
                   </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="answer-a">Answer A</Label>
-                      <Input
-                        id="answer-a"
-                        value={answerA}
-                        onChange={(e) => setAnswerA(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="answer-b">Answer B</Label>
-                      <Input
-                        id="answer-b"
-                        value={answerB}
-                        onChange={(e) => setAnswerB(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="answer-c">Answer C</Label>
-                      <Input
-                        id="answer-c"
-                        value={answerC}
-                        onChange={(e) => setAnswerC(e.target.value)}
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="answer-d">Answer D</Label>
-                      <Input
-                        id="answer-d"
-                        value={answerD}
-                        onChange={(e) => setAnswerD(e.target.value)}
-                        required
-                      />
-                    </div>
-                  </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="correct">Correct Answer</Label>
-                    <select
-                      id="correct"
-                      className="w-full p-2 bg-background border border-border rounded-md"
-                      value={correctAnswer}
-                      onChange={(e) => setCorrectAnswer(e.target.value)}
-                    >
-                      <option value="A">A</option>
-                      <option value="B">B</option>
-                      <option value="C">C</option>
-                      <option value="D">D</option>
-                    </select>
+                    <Label htmlFor="image-url">Image URL (optional)</Label>
+                    <Input
+                      id="image-url"
+                      value={questionImageUrl}
+                      onChange={(e) => setQuestionImageUrl(e.target.value)}
+                      placeholder="https://..."
+                    />
                   </div>
+
+                  {questionType === "multiple_choice" ? (
+                    <>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="answer-a">Answer A</Label>
+                          <Input
+                            id="answer-a"
+                            value={answerA}
+                            onChange={(e) => setAnswerA(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="answer-b">Answer B</Label>
+                          <Input
+                            id="answer-b"
+                            value={answerB}
+                            onChange={(e) => setAnswerB(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="answer-c">Answer C</Label>
+                          <Input
+                            id="answer-c"
+                            value={answerC}
+                            onChange={(e) => setAnswerC(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="answer-d">Answer D</Label>
+                          <Input
+                            id="answer-d"
+                            value={answerD}
+                            onChange={(e) => setAnswerD(e.target.value)}
+                            required
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="correct">Correct Answer</Label>
+                        <select
+                          id="correct"
+                          className="w-full p-2 bg-background border border-border rounded-md"
+                          value={correctAnswer}
+                          onChange={(e) => setCorrectAnswer(e.target.value)}
+                        >
+                          <option value="A">A</option>
+                          <option value="B">B</option>
+                          <option value="C">C</option>
+                          <option value="D">D</option>
+                        </select>
+                      </div>
+                    </>
+                  ) : (
+                    <div className="space-y-2">
+                      <Label htmlFor="text-answer">Correct Answer (text)</Label>
+                      <Input
+                        id="text-answer"
+                        value={correctAnswer}
+                        onChange={(e) => setCorrectAnswer(e.target.value)}
+                        placeholder="Enter the exact answer"
+                        required
+                      />
+                      <p className="text-sm text-muted-foreground">
+                        Note: Answer matching is case-insensitive
+                      </p>
+                    </div>
+                  )}
+                  
                   <div className="space-y-2">
-                    <Label htmlFor="explanation">Explanation</Label>
+                    <Label htmlFor="explanation">
+                      {questionType === "text_input" ? "Context/Additional Info (optional)" : "Explanation"}
+                    </Label>
                     <Textarea
                       id="explanation"
                       value={explanation}
                       onChange={(e) => setExplanation(e.target.value)}
+                      placeholder={questionType === "text_input" ? "Provide context or information about the question" : "Explain why this is the correct answer"}
                     />
                   </div>
                   <Button type="submit" variant="uplight">
@@ -449,9 +530,21 @@ const Admin = () => {
                         className="p-4 border border-border rounded-lg"
                       >
                         <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-bold">
-                            Q{index + 1}: {question.question_text}
-                          </h3>
+                          <div>
+                            <div className="flex gap-2 mb-2">
+                              <span className="px-2 py-1 bg-primary/20 text-primary text-xs rounded">
+                                {question.question_type === "multiple_choice" ? "Multiple Choice" : "Text Input"}
+                              </span>
+                              {question.category && (
+                                <span className="px-2 py-1 bg-secondary/20 text-secondary text-xs rounded">
+                                  {question.category}
+                                </span>
+                              )}
+                            </div>
+                            <h3 className="font-bold">
+                              Q{index + 1}: {question.question_text}
+                            </h3>
+                          </div>
                           <Button
                             variant="destructive"
                             size="sm"
@@ -460,14 +553,25 @@ const Admin = () => {
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
+                        {question.question_image_url && (
+                          <img src={question.question_image_url} alt="Question" className="w-32 h-32 object-cover rounded mb-2" />
+                        )}
                         <div className="space-y-1 text-sm">
-                          <p>A: {question.answer_a}</p>
-                          <p>B: {question.answer_b}</p>
-                          <p>C: {question.answer_c}</p>
-                          <p>D: {question.answer_d}</p>
-                          <p className="text-primary font-bold">
-                            Correct: {question.correct_answer}
-                          </p>
+                          {question.question_type === "multiple_choice" ? (
+                            <>
+                              <p>A: {question.answer_a}</p>
+                              <p>B: {question.answer_b}</p>
+                              <p>C: {question.answer_c}</p>
+                              <p>D: {question.answer_d}</p>
+                              <p className="text-primary font-bold">
+                                Correct: {question.correct_answer}
+                              </p>
+                            </>
+                          ) : (
+                            <p className="text-primary font-bold">
+                              Correct Answer: {question.correct_answer}
+                            </p>
+                          )}
                           {question.explanation && (
                             <p className="text-muted-foreground italic">
                               {question.explanation}

@@ -80,36 +80,45 @@ export type Database = {
           answer_b: string
           answer_c: string
           answer_d: string
+          category: string | null
           correct_answer: string
           created_at: string
           explanation: string | null
           game_id: string
           id: string
+          question_image_url: string | null
           question_text: string
+          question_type: string
         }
         Insert: {
           answer_a: string
           answer_b: string
           answer_c: string
           answer_d: string
+          category?: string | null
           correct_answer: string
           created_at?: string
           explanation?: string | null
           game_id: string
           id?: string
+          question_image_url?: string | null
           question_text: string
+          question_type?: string
         }
         Update: {
           answer_a?: string
           answer_b?: string
           answer_c?: string
           answer_d?: string
+          category?: string | null
           correct_answer?: string
           created_at?: string
           explanation?: string | null
           game_id?: string
           id?: string
+          question_image_url?: string | null
           question_text?: string
+          question_type?: string
         }
         Relationships: [
           {

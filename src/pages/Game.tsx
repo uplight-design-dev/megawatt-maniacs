@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { CheckCircle2, XCircle } from "lucide-react";
 
@@ -16,6 +16,9 @@ interface Question {
   answer_d: string;
   correct_answer: string;
   explanation: string;
+  question_type: string;
+  question_image_url?: string;
+  category?: string;
 }
 
 const Game = () => {
@@ -24,6 +27,7 @@ const Game = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [textAnswer, setTextAnswer] = useState("");
   const [showExplanation, setShowExplanation] = useState(false);
   const [loading, setLoading] = useState(true);
   const [gameId, setGameId] = useState<string>("");
@@ -90,10 +94,25 @@ const Game = () => {
     }
   };
 
+  const handleTextSubmit = () => {
+    if (showExplanation || !textAnswer.trim()) return;
+    
+    setShowExplanation(true);
+    
+    // Check if text answer matches correct answer (case insensitive)
+    const isCorrect = textAnswer.trim().toLowerCase() === 
+      questions[currentQuestionIndex].correct_answer.toLowerCase();
+    
+    if (isCorrect) {
+      setScore(score + 1);
+    }
+  };
+
   const handleNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedAnswer(null);
+      setTextAnswer("");
       setShowExplanation(false);
     } else {
       finishGame();
@@ -145,74 +164,142 @@ const Game = () => {
   ];
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
+    <div className="min-h-screen pattern-background p-4 md:p-8">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8 bg-white/10 backdrop-blur-sm rounded-lg p-4">
           <div className="flex justify-between items-center mb-4">
-            <h1 className="text-2xl font-bold">Question {currentQuestionIndex + 1} of {questions.length}</h1>
-            <div className="text-xl font-bold">
+            <div className="flex gap-2">
+              <span className="px-4 py-2 bg-white text-uplight-black rounded-full text-sm font-bold">
+                ROUND 1
+              </span>
+              {currentQuestion.category && (
+                <span className="px-4 py-2 bg-uplight-black text-white rounded-full text-sm font-bold">
+                  Question {currentQuestionIndex + 1}: {currentQuestion.category}
+                </span>
+              )}
+            </div>
+            <div className="text-xl font-bold text-white">
               Score: <span className="text-primary">{score}</span>
             </div>
           </div>
-          <Progress value={progress} className="h-2" />
         </div>
 
         {/* Question */}
-        <Card className="p-6 md:p-8 mb-6 bg-card border-border">
-          <h2 className="text-2xl md:text-3xl font-bold mb-8">
+        <Card className="p-6 md:p-8 mb-6 bg-white">
+          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-uplight-black">
             {currentQuestion.question_text}
           </h2>
 
-          {/* Answers */}
-          <div className="grid gap-4">
-            {answers.map((answer) => {
-              const isSelected = selectedAnswer === answer.letter;
-              const isCorrect = answer.letter === currentQuestion.correct_answer;
-              const showCorrect = showExplanation && isCorrect;
-              const showIncorrect = showExplanation && isSelected && !isCorrect;
+          {/* Question Image */}
+          {currentQuestion.question_image_url && (
+            <div className="mb-6">
+              <img 
+                src={currentQuestion.question_image_url} 
+                alt="Question illustration"
+                className="w-full max-w-md mx-auto rounded-lg"
+              />
+            </div>
+          )}
 
-              return (
-                <button
-                  key={answer.letter}
-                  onClick={() => handleAnswerSelect(answer.letter)}
-                  disabled={showExplanation}
-                  className={`
-                    p-4 md:p-6 rounded-[99px] border-2 transition-all text-left
-                    ${!showExplanation && "hover:border-primary hover:bg-primary/10"}
-                    ${showCorrect && "border-primary bg-primary/20"}
-                    ${showIncorrect && "border-destructive bg-destructive/20"}
-                    ${!showExplanation && isSelected && "border-primary"}
-                    ${!showExplanation && !isSelected && "border-border"}
-                    ${showExplanation && !isCorrect && !isSelected && "opacity-50"}
-                  `}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`
-                      w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg
-                      ${showCorrect && "bg-primary text-primary-foreground"}
-                      ${showIncorrect && "bg-destructive text-destructive-foreground"}
-                      ${!showExplanation && "bg-secondary text-secondary-foreground"}
-                    `}>
-                      {answer.letter}
+          {/* Multiple Choice Answers */}
+          {currentQuestion.question_type === 'multiple_choice' && (
+            <div className="grid gap-4">
+              {answers.map((answer) => {
+                const isSelected = selectedAnswer === answer.letter;
+                const isCorrect = answer.letter === currentQuestion.correct_answer;
+                const showCorrect = showExplanation && isCorrect;
+                const showIncorrect = showExplanation && isSelected && !isCorrect;
+
+                return (
+                  <button
+                    key={answer.letter}
+                    onClick={() => handleAnswerSelect(answer.letter)}
+                    disabled={showExplanation}
+                    className={`
+                      p-4 md:p-6 rounded-[99px] border-2 transition-all text-left
+                      ${!showExplanation && "hover:border-secondary hover:bg-secondary/10"}
+                      ${showCorrect && "border-primary bg-primary/20"}
+                      ${showIncorrect && "border-destructive bg-destructive/20"}
+                      ${!showExplanation && isSelected && "border-secondary"}
+                      ${!showExplanation && !isSelected && "border-border"}
+                      ${showExplanation && !isCorrect && !isSelected && "opacity-50"}
+                    `}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`
+                        w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg
+                        ${showCorrect && "bg-primary text-primary-foreground"}
+                        ${showIncorrect && "bg-destructive text-destructive-foreground"}
+                        ${!showExplanation && "bg-uplight-gray text-white"}
+                      `}>
+                        {answer.letter}
+                      </div>
+                      <span className="flex-1 text-base md:text-lg text-uplight-black">{answer.text}</span>
+                      {showCorrect && <CheckCircle2 className="w-6 h-6 text-primary" />}
+                      {showIncorrect && <XCircle className="w-6 h-6 text-destructive" />}
                     </div>
-                    <span className="flex-1 text-base md:text-lg">{answer.text}</span>
-                    {showCorrect && <CheckCircle2 className="w-6 h-6 text-primary" />}
-                    {showIncorrect && <XCircle className="w-6 h-6 text-destructive" />}
-                  </div>
-                </button>
-              );
-            })}
-          </div>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Text Input Answer */}
+          {currentQuestion.question_type === 'text_input' && (
+            <div className="space-y-4">
+              {currentQuestion.explanation && !showExplanation && (
+                <p className="text-uplight-gray">{currentQuestion.explanation}</p>
+              )}
+              <Input
+                type="text"
+                placeholder="Enter your answer here..."
+                value={textAnswer}
+                onChange={(e) => setTextAnswer(e.target.value)}
+                disabled={showExplanation}
+                className="bg-uplight-light-gray border-0 text-uplight-black"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleTextSubmit();
+                  }
+                }}
+              />
+              {!showExplanation && (
+                <Button
+                  variant="uplight"
+                  size="lg"
+                  onClick={handleTextSubmit}
+                  disabled={!textAnswer.trim()}
+                  className="w-full md:w-auto"
+                >
+                  Submit & Continue
+                </Button>
+              )}
+              {showExplanation && (
+                <div className={`p-4 rounded-lg ${
+                  textAnswer.trim().toLowerCase() === currentQuestion.correct_answer.toLowerCase()
+                    ? "bg-primary/20 border-2 border-primary"
+                    : "bg-destructive/20 border-2 border-destructive"
+                }`}>
+                  <p className="font-bold text-uplight-black">
+                    {textAnswer.trim().toLowerCase() === currentQuestion.correct_answer.toLowerCase()
+                      ? `Correct! ⚡`
+                      : `Not quite... The correct answer is: ${currentQuestion.correct_answer}`
+                    }
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </Card>
 
-        {/* Explanation */}
-        {showExplanation && (
-          <Card className="p-6 mb-6 bg-card border-border animate-fade-in">
-            <h3 className="font-bold text-xl mb-2">
+        {/* Explanation for Multiple Choice */}
+        {showExplanation && currentQuestion.question_type === 'multiple_choice' && (
+          <Card className="p-6 mb-6 bg-white animate-fade-in">
+            <h3 className="font-bold text-xl mb-2 text-uplight-black">
               {selectedAnswer === currentQuestion.correct_answer ? "Correct! ⚡" : "Not quite..."}
             </h3>
-            <p className="text-muted-foreground">{currentQuestion.explanation}</p>
+            <p className="text-uplight-gray">{currentQuestion.explanation}</p>
           </Card>
         )}
 

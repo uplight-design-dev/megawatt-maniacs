@@ -11,49 +11,70 @@ const Index = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!name.trim() || !email.trim()) {
-      toast.error("Please enter your name and email");
+    if (!email.trim() || (!isLogin && !name.trim())) {
+      toast.error(isLogin ? "Please enter your email" : "Please enter your name and email");
       return;
     }
 
     setLoading(true);
     try {
-      // Check if user already exists
-      const { data: existingUser } = await supabase
-        .from("users")
-        .select("id, name")
-        .eq("email", email.toLowerCase())
-        .single();
+      if (isLogin) {
+        // Login flow - find existing user by email
+        const { data: existingUser, error } = await supabase
+          .from("users")
+          .select("id, name")
+          .eq("email", email.toLowerCase())
+          .maybeSingle();
 
-      if (existingUser) {
+        if (error) throw error;
+
+        if (!existingUser) {
+          toast.error("No account found with this email. Please sign up first.");
+          setLoading(false);
+          return;
+        }
+
         sessionStorage.setItem("userId", existingUser.id);
         sessionStorage.setItem("userName", existingUser.name);
         toast.success(`Welcome back, ${existingUser.name}!`);
         navigate("/game");
-        return;
+      } else {
+        // Signup flow - check if user already exists
+        const { data: existingUser } = await supabase
+          .from("users")
+          .select("id, name")
+          .eq("email", email.toLowerCase())
+          .maybeSingle();
+
+        if (existingUser) {
+          toast.error("An account with this email already exists. Please login instead.");
+          setLoading(false);
+          return;
+        }
+
+        // Create new user
+        const { data: newUser, error } = await supabase
+          .from("users")
+          .insert({ name: name.trim(), email: email.toLowerCase() })
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        sessionStorage.setItem("userId", newUser.id);
+        sessionStorage.setItem("userName", newUser.name);
+        toast.success("Welcome to Megawatt Maniacs!");
+        navigate("/game");
       }
-
-      // Create new user
-      const { data: newUser, error } = await supabase
-        .from("users")
-        .insert({ name: name.trim(), email: email.toLowerCase() })
-        .select()
-        .single();
-
-      if (error) throw error;
-
-      sessionStorage.setItem("userId", newUser.id);
-      sessionStorage.setItem("userName", newUser.name);
-      toast.success("Welcome to Megawatt Maniacs!");
-      navigate("/game");
     } catch (error) {
-      console.error("Signup error:", error);
-      toast.error("Failed to sign up. Please try again.");
+      console.error("Auth error:", error);
+      toast.error(isLogin ? "Failed to login. Please try again." : "Failed to sign up. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -83,25 +104,30 @@ const Index = () => {
             </p>
           </div>
 
-          {/* Right Side - Signup Card */}
+          {/* Right Side - Signup/Login Card */}
           <Card className="p-8 bg-white animate-fade-in" style={{ animationDelay: "0.2s" }}>
             <h2 className="text-3xl font-bold mb-2 text-uplight-black">
-              Sign-Up to play as a<br />Megawatt Maniac!
+              {isLogin ? "Welcome Back!" : "Sign-Up to play as a"}<br />
+              {!isLogin && "Megawatt Maniac!"}
             </h2>
             <p className="text-uplight-gray mb-6">
-              You'll be able to track your score over time<br />
-              and compete against your fellow colleagues!
+              {isLogin 
+                ? "Login to continue your trivia journey!"
+                : "You'll be able to track your score over time and compete against your fellow colleagues!"
+              }
             </p>
             
-            <form onSubmit={handleSignup} className="space-y-4">
-              <Input
-                type="text"
-                placeholder="Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                className="bg-uplight-light-gray border-0 text-uplight-black placeholder:text-uplight-gray"
-                disabled={loading}
-              />
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {!isLogin && (
+                <Input
+                  type="text"
+                  placeholder="Name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="bg-uplight-light-gray border-0 text-uplight-black placeholder:text-uplight-gray"
+                  disabled={loading}
+                />
+              )}
               <Input
                 type="email"
                 placeholder="Email"
@@ -111,25 +137,41 @@ const Index = () => {
                 disabled={loading}
               />
               
-              <div className="flex items-center gap-4">
+              <div className="space-y-3">
                 <Button 
                   type="submit"
                   variant="uplight"
                   size="lg"
                   disabled={loading}
-                  className="flex-1"
+                  className="w-full"
                 >
-                  Start Playing!
+                  {isLogin ? "Login" : "Start Playing!"}
                 </Button>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={handleGuestPlay}
-                  className="text-uplight-gray hover:text-uplight-black"
-                  disabled={loading}
-                >
-                  Play as a guest
-                </Button>
+                
+                <div className="flex items-center justify-between gap-4">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={() => {
+                      setIsLogin(!isLogin);
+                      setName("");
+                      setEmail("");
+                    }}
+                    className="text-uplight-gray hover:text-uplight-black text-sm"
+                    disabled={loading}
+                  >
+                    {isLogin ? "Need an account? Sign up" : "Already have an account? Login"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={handleGuestPlay}
+                    className="text-uplight-gray hover:text-uplight-black text-sm"
+                    disabled={loading}
+                  >
+                    Play as guest
+                  </Button>
+                </div>
               </div>
             </form>
           </Card>

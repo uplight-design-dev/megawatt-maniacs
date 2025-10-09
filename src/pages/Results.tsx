@@ -53,8 +53,8 @@ const Results = () => {
   };
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen py-4 md:py-8">
+      <div className="mx-auto" style={{ maxWidth: "900px" }}>
         {/* Results Header */}
         {finalScore && (
           <div className="text-center mb-12 animate-fade-in">

@@ -84,36 +84,25 @@ const Game = () => {
   };
 
   const handleAnswerSelect = (answer: string) => {
-    if (showExplanation) return;
-    
     setSelectedAnswer(answer);
-    setShowExplanation(true);
-
-    if (answer === questions[currentQuestionIndex].correct_answer) {
-      setScore(score + 1);
-    }
   };
 
   const handleTextSubmit = () => {
-    if (showExplanation || !textAnswer.trim()) return;
-    
-    setShowExplanation(true);
-    
-    // Check if text answer matches correct answer (case insensitive)
-    const isCorrect = textAnswer.trim().toLowerCase() === 
-      questions[currentQuestionIndex].correct_answer.toLowerCase();
-    
-    if (isCorrect) {
-      setScore(score + 1);
-    }
+    // Just allow text input, no immediate feedback
   };
 
   const handleNextQuestion = () => {
+    // Check if answer is correct and update score
+    if (selectedAnswer === questions[currentQuestionIndex].correct_answer) {
+      setScore(score + 1);
+    } else if (textAnswer.trim().toLowerCase() === questions[currentQuestionIndex].correct_answer.toLowerCase()) {
+      setScore(score + 1);
+    }
+
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedAnswer(null);
       setTextAnswer("");
-      setShowExplanation(false);
     } else {
       finishGame();
     }
@@ -183,31 +172,57 @@ const Game = () => {
     { letter: "D", text: currentQuestion.answer_d },
   ];
 
+  const userName = sessionStorage.getItem("userName") || "Guest";
+
   return (
-    <div className="min-h-screen pattern-background p-4 md:p-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="mb-8 bg-white/10 backdrop-blur-sm rounded-lg p-4">
-          <div className="flex justify-between items-center mb-4">
-            <div className="flex gap-2">
-              <span className="px-4 py-2 bg-white text-uplight-black rounded-full text-sm font-bold">
-                ROUND 1
-              </span>
-              {currentQuestion.category && (
-                <span className="px-4 py-2 bg-uplight-black text-white rounded-full text-sm font-bold">
-                  Question {currentQuestionIndex + 1}: {currentQuestion.category}
-                </span>
-              )}
-            </div>
-            <div className="text-xl font-bold text-white">
-              Score: <span className="text-primary">{score}</span>
-            </div>
+    <div className="min-h-screen pattern-background">
+      {/* Header Navbar */}
+      <div style={{ 
+        position: "fixed",
+        top: "0",
+        left: "0",
+        right: "0",
+        zIndex: "50",
+        height: "105px",
+        display: "flex",
+        alignItems: "center",
+        paddingLeft: "50px", 
+        paddingRight: "50px",
+        backgroundColor: "rgba(255, 255, 255, 0.01)",
+        backdropFilter: "blur(10px)",
+        WebkitBackdropFilter: "blur(10px)",
+        width: "100vw"
+      }}>
+        <img src="/megawatt-maniac-white-logo.svg" alt="Megawatt Maniacs" className="w-[204px] h-[62px]" />
+        <div className="flex-1 flex justify-center" style={{ marginLeft: "-102px" }}>
+          <div className="flex items-center gap-3">
+            <img src="/default-avatar-white.svg" alt="User Avatar" className="w-8 h-8" />
+            <span className="text-white font-medium">{userName}</span>
           </div>
         </div>
+        <img src="/back-bento@2x.png" alt="Menu" className="w-[37px] h-[35px]" />
+      </div>
+
+      {/* Spacer to ensure proper background coverage */}
+      <div className="h-[20px]"></div>
+
+      <div className="mx-auto pb-6" style={{ width: "900px", marginTop: "195px" }}>
 
         {/* Question */}
-        <Card className="p-6 md:p-8 mb-6 bg-white">
-          <h2 className="text-2xl md:text-3xl font-bold mb-6 text-uplight-black">
+        <Card className="mb-6 bg-white rounded-2xl shadow-lg" style={{ paddingLeft: "90px", paddingRight: "90px", paddingTop: "70px", paddingBottom: "70px" }}>
+          {/* Question Labels */}
+          <div className="flex gap-3 mb-6">
+            <span className="px-4 bg-white text-black rounded-full text-xs font-normal border border-black" style={{ fontFamily: 'Mark OT', fontSize: '12px', height: '27px', display: 'flex', alignItems: 'center' }}>
+              ROUND 1
+            </span>
+            {currentQuestion.category && (
+              <span className="px-4 bg-black text-white rounded-full text-sm font-bold" style={{ height: '27px', display: 'flex', alignItems: 'center' }}>
+                Question {currentQuestionIndex + 1}: {currentQuestion.category}
+              </span>
+            )}
+          </div>
+          
+          <h2 className="mb-6 text-black" style={{ fontFamily: 'Mark OT', fontSize: '42px', lineHeight: '110%', fontWeight: '400' }}>
             {currentQuestion.question_text}
           </h2>
 
@@ -217,49 +232,45 @@ const Game = () => {
               <img 
                 src={currentQuestion.question_image_url} 
                 alt="Question illustration"
-                className="w-full max-w-md mx-auto rounded-lg"
+                className="w-full max-w-md mx-auto rounded-3xl"
               />
             </div>
           )}
 
           {/* Multiple Choice Answers */}
           {currentQuestion.question_type === 'multiple_choice' && (
-            <div className="grid gap-4">
+            <div className="space-y-2 mb-8">
               {answers.map((answer) => {
                 const isSelected = selectedAnswer === answer.letter;
-                const isCorrect = answer.letter === currentQuestion.correct_answer;
-                const showCorrect = showExplanation && isCorrect;
-                const showIncorrect = showExplanation && isSelected && !isCorrect;
 
                 return (
-                  <button
+                  <label
                     key={answer.letter}
-                    onClick={() => handleAnswerSelect(answer.letter)}
-                    disabled={showExplanation}
-                    className={`
-                      p-4 md:p-6 rounded-[99px] border-2 transition-all text-left
-                      ${!showExplanation && "hover:border-secondary hover:bg-secondary/10"}
-                      ${showCorrect && "border-primary bg-primary/20"}
-                      ${showIncorrect && "border-destructive bg-destructive/20"}
-                      ${!showExplanation && isSelected && "border-secondary"}
-                      ${!showExplanation && !isSelected && "border-border"}
-                      ${showExplanation && !isCorrect && !isSelected && "opacity-50"}
-                    `}
+                    className="flex items-center gap-4 cursor-pointer p-4 hover:bg-gray-50 rounded-lg transition-colors"
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        name="answer"
+                        value={answer.letter}
+                        checked={isSelected}
+                        onChange={() => handleAnswerSelect(answer.letter)}
+                        className="sr-only"
+                      />
                       <div className={`
-                        w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg
-                        ${showCorrect && "bg-primary text-primary-foreground"}
-                        ${showIncorrect && "bg-destructive text-destructive-foreground"}
-                        ${!showExplanation && "bg-uplight-gray text-white"}
+                        w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all
+                        ${isSelected 
+                          ? 'border-green-500 bg-green-500' 
+                          : 'border-gray-300 bg-white'
+                        }
                       `}>
-                        {answer.letter}
+                        {isSelected && (
+                          <div className="w-3 h-3 bg-white rounded-full"></div>
+                        )}
                       </div>
-                      <span className="flex-1 text-base md:text-lg text-uplight-black">{answer.text}</span>
-                      {showCorrect && <CheckCircle2 className="w-6 h-6 text-primary" />}
-                      {showIncorrect && <XCircle className="w-6 h-6 text-destructive" />}
                     </div>
-                  </button>
+                    <span className="text-lg text-black flex-1">{answer.text}</span>
+                  </label>
                 );
               })}
             </div>
@@ -267,75 +278,52 @@ const Game = () => {
 
           {/* Text Input Answer */}
           {currentQuestion.question_type === 'text_input' && (
-            <div className="space-y-4">
-              {currentQuestion.explanation && !showExplanation && (
-                <p className="text-uplight-gray">{currentQuestion.explanation}</p>
+            <div className="space-y-4 mb-8">
+              {currentQuestion.explanation && (
+                <p className="text-gray-600 text-sm">{currentQuestion.explanation}</p>
               )}
               <Input
                 type="text"
                 placeholder="Enter your answer here..."
                 value={textAnswer}
                 onChange={(e) => setTextAnswer(e.target.value)}
-                disabled={showExplanation}
-                className="bg-uplight-light-gray border-0 text-uplight-black"
+                className="bg-gray-50 border-gray-300 text-black"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     handleTextSubmit();
                   }
                 }}
               />
-              {!showExplanation && (
-                <Button
-                  variant="uplight"
-                  size="lg"
-                  onClick={handleTextSubmit}
-                  disabled={!textAnswer.trim()}
-                  className="w-full md:w-auto"
-                >
-                  Submit & Continue
-                </Button>
-              )}
-              {showExplanation && (
-                <div className={`p-4 rounded-lg ${
-                  textAnswer.trim().toLowerCase() === currentQuestion.correct_answer.toLowerCase()
-                    ? "bg-primary/20 border-2 border-primary"
-                    : "bg-destructive/20 border-2 border-destructive"
-                }`}>
-                  <p className="font-bold text-uplight-black">
-                    {textAnswer.trim().toLowerCase() === currentQuestion.correct_answer.toLowerCase()
-                      ? `Correct! ⚡`
-                      : `Not quite... The correct answer is: ${currentQuestion.correct_answer}`
-                    }
-                  </p>
-                </div>
-              )}
             </div>
           )}
-        </Card>
 
-        {/* Explanation for Multiple Choice */}
-        {showExplanation && currentQuestion.question_type === 'multiple_choice' && (
-          <Card className="p-6 mb-6 bg-white animate-fade-in">
-            <h3 className="font-bold text-xl mb-2 text-uplight-black">
-              {selectedAnswer === currentQuestion.correct_answer ? "Correct! ⚡" : "Not quite..."}
-            </h3>
-            <p className="text-uplight-gray">{currentQuestion.explanation}</p>
-          </Card>
-        )}
-
-        {/* Next button */}
-        {showExplanation && (
-          <div className="flex justify-center animate-fade-in">
+          {/* Next Question Button */}
+          <div className="flex justify-end" style={{ marginRight: "70px" }}>
             <Button
-              variant="uplight"
-              size="lg"
               onClick={handleNextQuestion}
-              className="min-w-[200px]"
+              disabled={!selectedAnswer && !textAnswer.trim()}
+              className="rounded-[99px] text-white text-lg font-medium transition-all hover:opacity-90 flex items-center gap-2"
+              style={{
+                backgroundColor: "#0047FF",
+                boxShadow: "0px 6px 24px 0px rgba(0,71,255,0.47)",
+                border: "1px solid rgba(0,0,0,0.2)",
+                width: "197px",
+                height: "51px"
+              }}
             >
               {currentQuestionIndex < questions.length - 1 ? "Next Question" : "See Results"}
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
             </Button>
           </div>
-        )}
+        </Card>
+      </div>
+
+      {/* Footer */}
+      <div className="text-center" style={{ marginTop: "275px", paddingBottom: "32px" }}>
+        <img src="/uplight-white-green-logo@2x.png" alt="Uplight" className="w-[222px] mx-auto mb-2" />
+        <p className="text-white text-sm">Copyright © 2026 Uplight, Inc. All rights reserved.</p>
       </div>
     </div>
   );

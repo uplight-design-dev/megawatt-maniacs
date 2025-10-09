@@ -88,29 +88,26 @@ const Index = () => {
 
   return (
     <div className="min-h-screen pattern-background">
-      <div className="container mx-auto px-4 py-12">
+      <div className="w-full py-12" style={{ maxWidth: "900px", margin: "0 auto" }}>
         {/* Main Hero Section */}
         <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
-          {/* Left Side - Logo and Tagline */}
+          {/* Left Side - Hero Mascot Logo */}
           <div className="text-center lg:text-left animate-fade-in">
-            <div className="flex items-center justify-center lg:justify-start gap-4 mb-6">
-              <img src={megawattLogo} alt="Megawatt Maniacs" className="w-24 h-24" />
-              <h1 className="text-5xl md:text-6xl font-bold text-white">
-                MEGAWATT<br />MANIACS
-              </h1>
-            </div>
-            <p className="text-2xl text-primary font-bold">
-              Test your clean energy knowledge!
-            </p>
+            <img src="/hero-mascot-logo@2x.png" alt="Megawatt Maniacs Hero" className="w-full max-w-md mx-auto lg:mx-0" />
           </div>
 
           {/* Right Side - Signup/Login Card */}
-          <Card className="p-8 bg-white animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <Card className="bg-white animate-fade-in max-w-[415px] w-full mx-auto lg:mx-0" style={{ animationDelay: "0.2s", padding: "40px" }}>
             <h2 className="text-3xl font-bold mb-2 text-uplight-black">
               {isLogin ? "Welcome Back!" : "Sign-Up to play as a"}<br />
               {!isLogin && "Megawatt Maniac!"}
             </h2>
-            <p className="text-uplight-gray mb-6">
+            <p className="mb-6" style={{ 
+              color: "#000000", 
+              fontSize: "15px", 
+              lineHeight: "140%", 
+              fontWeight: 400 
+            }}>
               {isLogin 
                 ? "Login to continue your trivia journey!"
                 : "You'll be able to track your score over time and compete against your fellow colleagues!"
@@ -124,7 +121,23 @@ const Index = () => {
                   placeholder="Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="bg-uplight-light-gray border-0 text-uplight-black placeholder:text-uplight-gray"
+                  className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors"
+                  style={{ 
+                    backgroundColor: "#FCFCFF",
+                    borderColor: "#CCD6FF",
+                    color: "#000000",
+                    borderWidth: "1px",
+                    borderRadius: "0px",
+                    fontSize: "18px",
+                    fontWeight: 400,
+                    "--focus-border-color": "#0047FF"
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = "#0047FF";
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = "#CCD6FF";
+                  }}
                   disabled={loading}
                 />
               )}
@@ -133,22 +146,55 @@ const Index = () => {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-uplight-light-gray border-0 text-uplight-black placeholder:text-uplight-gray"
+                className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors"
+                style={{ 
+                  backgroundColor: "#FCFCFF",
+                  borderColor: "#CCD6FF",
+                  color: "#000000",
+                  borderWidth: "1px",
+                  borderRadius: "0px",
+                  fontSize: "18px",
+                  fontWeight: 400
+                }}
+                onFocus={(e) => {
+                  e.target.style.borderColor = "#0047FF";
+                }}
+                onBlur={(e) => {
+                  e.target.style.borderColor = "#CCD6FF";
+                }}
                 disabled={loading}
               />
               
               <div className="space-y-3">
-                <Button 
-                  type="submit"
-                  variant="uplight"
-                  size="lg"
-                  disabled={loading}
-                  className="w-full"
-                >
-                  {isLogin ? "Login" : "Start Playing!"}
-                </Button>
-                
                 <div className="flex items-center justify-between gap-4">
+                  <Button 
+                    type="submit"
+                    size="lg"
+                    disabled={loading}
+                    className="rounded-[99px] text-white text-lg font-medium transition-all hover:opacity-90"
+                    style={{
+                      backgroundColor: "#0047FF",
+                      boxShadow: "0px 6px 24px 0px rgba(0,71,255,0.47)",
+                      border: "1px solid rgba(0,0,0,0.2)",
+                      width: "197px",
+                      height: "51px"
+                    }}
+                  >
+                    {isLogin ? "Login" : "Start Playing!"}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={handleGuestPlay}
+                    className="text-sm transition-colors hover:text-[#0047FF] hover:bg-transparent"
+                    style={{ color: "#88889C" }}
+                    disabled={loading}
+                  >
+                    Play as guest
+                  </Button>
+                </div>
+                
+                <div className="flex justify-center">
                   <Button
                     type="button"
                     variant="ghost"
@@ -157,19 +203,11 @@ const Index = () => {
                       setName("");
                       setEmail("");
                     }}
-                    className="text-uplight-gray hover:text-uplight-black text-sm"
+                    className="text-sm transition-colors hover:text-[#0047FF] hover:bg-transparent"
+                    style={{ color: "#88889C" }}
                     disabled={loading}
                   >
                     {isLogin ? "Need an account? Sign up" : "Already have an account? Login"}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={handleGuestPlay}
-                    className="text-uplight-gray hover:text-uplight-black text-sm"
-                    disabled={loading}
-                  >
-                    Play as guest
                   </Button>
                 </div>
               </div>

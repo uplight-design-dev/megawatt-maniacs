@@ -131,6 +131,12 @@ All colors MUST be HSL.
   h1, h2, h3, h4, h5, h6 {
     @apply font-bold;
   }
+
+  /* Custom placeholder styling */
+  input::placeholder {
+    color: #88889C !important;
+    opacity: 1;
+  }
 }
 
 @layer utilities {
@@ -152,7 +158,7 @@ All colors MUST be HSL.
   .pattern-background {
     background-image: url('/blue-background.jpg');
     background-size: cover;
-    background-position: center;
+    background-position: top center;
     background-repeat: no-repeat;
     background-attachment: fixed;
   }

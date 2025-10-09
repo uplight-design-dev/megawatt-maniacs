@@ -19,6 +19,7 @@ const Results = () => {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const finalScore = sessionStorage.getItem("finalScore");
+  const totalScore = sessionStorage.getItem("totalScore");
   const userName = sessionStorage.getItem("userName");
 
   useEffect(() => {
@@ -67,6 +68,12 @@ const Results = () => {
             <p className="text-xl md:text-2xl text-muted-foreground">
               {getScoreMessage(parseInt(finalScore))}
             </p>
+            {totalScore && (
+              <div className="mt-6 p-6 bg-primary/10 border-2 border-primary rounded-[99px] inline-block">
+                <p className="text-lg text-foreground mb-1">Your Total Career Score</p>
+                <p className="text-4xl font-bold text-primary">{totalScore} points</p>
+              </div>
+            )}
           </div>
         )}
 

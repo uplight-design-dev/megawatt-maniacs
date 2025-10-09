@@ -136,18 +136,21 @@ export type Database = {
           email: string
           id: string
           name: string
+          total_score: number
         }
         Insert: {
           created_at?: string
           email: string
           id?: string
           name: string
+          total_score?: number
         }
         Update: {
           created_at?: string
           email?: string
           id?: string
           name?: string
+          total_score?: number
         }
         Relationships: []
       }

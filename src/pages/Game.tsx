@@ -121,16 +121,36 @@ const Game = () => {
 
   const finishGame = async () => {
     const userId = sessionStorage.getItem("userId");
-    if (!userId) return;
+    if (!userId || userId === "guest") {
+      sessionStorage.setItem("finalScore", score.toString());
+      navigate("/results");
+      return;
+    }
 
     try {
+      // Save individual game score to leaderboard
       await supabase.from("leaderboard").insert({
         user_id: userId,
         game_id: gameId,
         score: score,
       });
 
+      // Update user's total cumulative score
+      const { data: userData } = await supabase
+        .from("users")
+        .select("total_score")
+        .eq("id", userId)
+        .single();
+
+      const newTotalScore = (userData?.total_score || 0) + score;
+
+      await supabase
+        .from("users")
+        .update({ total_score: newTotalScore })
+        .eq("id", userId);
+
       sessionStorage.setItem("finalScore", score.toString());
+      sessionStorage.setItem("totalScore", newTotalScore.toString());
       navigate("/results");
     } catch (error) {
       console.error("Error saving score:", error);

@@ -96,18 +96,18 @@ const Index = () => {
             <form onSubmit={handleSignup} className="space-y-4">
               <Input
                 type="text"
-                placeholder="Your Name"
+                placeholder="Name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="bg-uplight-light-gray border-0"
+                className="bg-uplight-light-gray border-0 text-uplight-black placeholder:text-uplight-gray"
                 disabled={loading}
               />
               <Input
                 type="email"
-                placeholder="Your email"
+                placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-uplight-light-gray border-0"
+                className="bg-uplight-light-gray border-0 text-uplight-black placeholder:text-uplight-gray"
                 disabled={loading}
               />
               

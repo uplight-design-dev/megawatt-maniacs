@@ -86,9 +86,11 @@ export type Database = {
           explanation: string | null
           game_id: string
           id: string
+          image_caption: string | null
           question_image_url: string | null
           question_text: string
           question_type: string
+          round_id: string | null
         }
         Insert: {
           answer_a: string
@@ -101,9 +103,11 @@ export type Database = {
           explanation?: string | null
           game_id: string
           id?: string
+          image_caption?: string | null
           question_image_url?: string | null
           question_text: string
           question_type?: string
+          round_id?: string | null
         }
         Update: {
           answer_a?: string
@@ -116,13 +120,54 @@ export type Database = {
           explanation?: string | null
           game_id?: string
           id?: string
+          image_caption?: string | null
           question_image_url?: string | null
           question_text?: string
           question_type?: string
+          round_id?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "questions_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "rounds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rounds: {
+        Row: {
+          created_at: string
+          game_id: string
+          id: string
+          round_number: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          game_id: string
+          id?: string
+          round_number: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          game_id?: string
+          id?: string
+          round_number?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rounds_game_id_fkey"
             columns: ["game_id"]
             isOneToOne: false
             referencedRelation: "games"

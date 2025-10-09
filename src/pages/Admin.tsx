@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2, Plus, Home } from "lucide-react";
+import { Trash2, Plus, Home, Pencil } from "lucide-react";
 
 interface Game {
   id: string;
@@ -16,9 +16,17 @@ interface Game {
   description: string;
 }
 
+interface Round {
+  id: string;
+  game_id: string;
+  title: string;
+  round_number: number;
+}
+
 interface Question {
   id: string;
   game_id: string;
+  round_id: string | null;
   question_text: string;
   answer_a: string;
   answer_b: string;
@@ -28,6 +36,7 @@ interface Question {
   explanation: string;
   question_type: string;
   question_image_url?: string;
+  image_caption?: string;
   category?: string;
 }
 
@@ -37,18 +46,26 @@ const Admin = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [games, setGames] = useState<Game[]>([]);
+  const [rounds, setRounds] = useState<Round[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedGameId, setSelectedGameId] = useState<string>("");
+  const [selectedRoundId, setSelectedRoundId] = useState<string>("");
+  const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
   
   // Game form
   const [gameTitle, setGameTitle] = useState("");
   const [gameDescription, setGameDescription] = useState("");
+  
+  // Round form
+  const [roundTitle, setRoundTitle] = useState("");
+  const [roundNumber, setRoundNumber] = useState(1);
   
   // Question form
   const [questionText, setQuestionText] = useState("");
   const [questionType, setQuestionType] = useState<"multiple_choice" | "text_input">("multiple_choice");
   const [category, setCategory] = useState("");
   const [questionImageUrl, setQuestionImageUrl] = useState("");
+  const [imageCaption, setImageCaption] = useState("");
   const [answerA, setAnswerA] = useState("");
   const [answerB, setAnswerB] = useState("");
   const [answerC, setAnswerC] = useState("");
@@ -64,9 +81,18 @@ const Admin = () => {
 
   useEffect(() => {
     if (selectedGameId) {
-      loadQuestions(selectedGameId);
+      loadRounds(selectedGameId);
+      setSelectedRoundId("");
     }
   }, [selectedGameId]);
+
+  useEffect(() => {
+    if (selectedRoundId) {
+      loadQuestions(selectedRoundId);
+    } else if (selectedGameId) {
+      loadQuestions(selectedGameId);
+    }
+  }, [selectedRoundId, selectedGameId]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,12 +142,31 @@ const Admin = () => {
     }
   };
 
-  const loadQuestions = async (gameId: string) => {
+  const loadRounds = async (gameId: string) => {
     const { data, error } = await supabase
-      .from("questions")
+      .from("rounds")
       .select("*")
       .eq("game_id", gameId)
-      .order("created_at", { ascending: true });
+      .order("round_number", { ascending: true });
+
+    if (error) {
+      toast.error("Failed to load rounds");
+      return;
+    }
+
+    setRounds(data || []);
+  };
+
+  const loadQuestions = async (roundOrGameId: string) => {
+    let query = supabase.from("questions").select("*");
+    
+    if (selectedRoundId) {
+      query = query.eq("round_id", roundOrGameId);
+    } else {
+      query = query.eq("game_id", roundOrGameId);
+    }
+
+    const { data, error } = await query.order("created_at", { ascending: true });
 
     if (error) {
       toast.error("Failed to load questions");
@@ -152,7 +197,7 @@ const Admin = () => {
   };
 
   const handleDeleteGame = async (gameId: string) => {
-    if (!confirm("Are you sure? This will delete all questions in this game.")) return;
+    if (!confirm("Are you sure? This will delete all rounds and questions in this game.")) return;
 
     const { error } = await supabase
       .from("games")
@@ -168,7 +213,84 @@ const Admin = () => {
     loadGames();
   };
 
-  const handleCreateQuestion = async (e: React.FormEvent) => {
+  const handleCreateRound = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!selectedGameId) {
+      toast.error("Please select a game first");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("rounds")
+      .insert({ 
+        game_id: selectedGameId, 
+        title: roundTitle, 
+        round_number: roundNumber 
+      });
+
+    if (error) {
+      toast.error("Failed to create round");
+      return;
+    }
+
+    toast.success("Round created successfully");
+    setRoundTitle("");
+    setRoundNumber(rounds.length + 2);
+    loadRounds(selectedGameId);
+  };
+
+  const handleDeleteRound = async (roundId: string) => {
+    if (!confirm("Are you sure? This will delete all questions in this round.")) return;
+
+    const { error } = await supabase
+      .from("rounds")
+      .delete()
+      .eq("id", roundId);
+
+    if (error) {
+      toast.error("Failed to delete round");
+      return;
+    }
+
+    toast.success("Round deleted successfully");
+    loadRounds(selectedGameId);
+  };
+
+  const clearQuestionForm = () => {
+    setQuestionText("");
+    setQuestionType("multiple_choice");
+    setCategory("");
+    setQuestionImageUrl("");
+    setImageCaption("");
+    setAnswerA("");
+    setAnswerB("");
+    setAnswerC("");
+    setAnswerD("");
+    setCorrectAnswer("A");
+    setExplanation("");
+    setEditingQuestionId(null);
+  };
+
+  const handleEditQuestion = (question: Question) => {
+    setEditingQuestionId(question.id);
+    setQuestionText(question.question_text);
+    setQuestionType(question.question_type as "multiple_choice" | "text_input");
+    setCategory(question.category || "");
+    setQuestionImageUrl(question.question_image_url || "");
+    setImageCaption(question.image_caption || "");
+    setAnswerA(question.answer_a);
+    setAnswerB(question.answer_b);
+    setAnswerC(question.answer_c);
+    setAnswerD(question.answer_d);
+    setCorrectAnswer(question.correct_answer);
+    setExplanation(question.explanation);
+    
+    // Scroll to form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCreateOrUpdateQuestion = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!selectedGameId) {
@@ -184,8 +306,10 @@ const Admin = () => {
       explanation: explanation,
     };
 
+    if (selectedRoundId) questionData.round_id = selectedRoundId;
     if (category) questionData.category = category;
     if (questionImageUrl) questionData.question_image_url = questionImageUrl;
+    if (imageCaption) questionData.image_caption = imageCaption;
 
     // For multiple choice, include all answers
     if (questionType === "multiple_choice") {
@@ -201,27 +325,35 @@ const Admin = () => {
       questionData.answer_d = "";
     }
 
-    const { error } = await supabase
-      .from("questions")
-      .insert(questionData);
+    if (editingQuestionId) {
+      // Update existing question
+      const { error } = await supabase
+        .from("questions")
+        .update(questionData)
+        .eq("id", editingQuestionId);
 
-    if (error) {
-      toast.error("Failed to create question");
-      return;
+      if (error) {
+        toast.error("Failed to update question");
+        return;
+      }
+
+      toast.success("Question updated successfully");
+    } else {
+      // Create new question
+      const { error } = await supabase
+        .from("questions")
+        .insert(questionData);
+
+      if (error) {
+        toast.error("Failed to create question");
+        return;
+      }
+
+      toast.success("Question created successfully");
     }
 
-    toast.success("Question created successfully");
-    setQuestionText("");
-    setQuestionType("multiple_choice");
-    setCategory("");
-    setQuestionImageUrl("");
-    setAnswerA("");
-    setAnswerB("");
-    setAnswerC("");
-    setAnswerD("");
-    setCorrectAnswer("A");
-    setExplanation("");
-    loadQuestions(selectedGameId);
+    clearQuestionForm();
+    loadQuestions(selectedRoundId || selectedGameId);
   };
 
   const handleDeleteQuestion = async (questionId: string) => {
@@ -238,7 +370,7 @@ const Admin = () => {
     }
 
     toast.success("Question deleted successfully");
-    loadQuestions(selectedGameId);
+    loadQuestions(selectedRoundId || selectedGameId);
   };
 
   if (!isAuthenticated) {
@@ -338,7 +470,7 @@ const Admin = () => {
                   {games.map((game) => (
                     <div
                       key={game.id}
-                      className="flex items-center justify-between p-4 border border-border rounded-lg"
+                      className="flex items-center justify-between p-4 border border-border rounded-[24px]"
                     >
                       <div>
                         <h3 className="font-bold text-lg">{game.title}</h3>
@@ -378,11 +510,89 @@ const Admin = () => {
               </Card>
             )}
 
-            {/* Create Question */}
+            {/* Manage Rounds */}
             {selectedGameId && (
               <Card className="p-6 bg-card border-border">
-                <h2 className="text-2xl font-bold mb-4">Create New Question</h2>
-                <form onSubmit={handleCreateQuestion} className="space-y-4">
+                <h2 className="text-2xl font-bold mb-4">Manage Rounds</h2>
+                
+                {/* Create Round Form */}
+                <form onSubmit={handleCreateRound} className="space-y-4 mb-6">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="space-y-2 md:col-span-2">
+                      <Label htmlFor="round-title">Round Title</Label>
+                      <Input
+                        id="round-title"
+                        value={roundTitle}
+                        onChange={(e) => setRoundTitle(e.target.value)}
+                        placeholder="e.g., Opening Round"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="round-number">Round Number</Label>
+                      <Input
+                        id="round-number"
+                        type="number"
+                        min="1"
+                        value={roundNumber}
+                        onChange={(e) => setRoundNumber(parseInt(e.target.value))}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <Button type="submit" variant="uplight">
+                    <Plus className="w-4 h-4 mr-2" />
+                    Create Round
+                  </Button>
+                </form>
+
+                {/* Rounds List */}
+                {rounds.length === 0 ? (
+                  <p className="text-muted-foreground">No rounds yet. Create one to organize questions.</p>
+                ) : (
+                  <div className="space-y-3">
+                    <Label>Select Round (optional - leave unselected to view all questions)</Label>
+                    <div className="space-y-2">
+                      {rounds.map((round) => (
+                        <div
+                          key={round.id}
+                          className={`flex items-center justify-between p-4 border rounded-[24px] cursor-pointer transition-colors ${
+                            selectedRoundId === round.id 
+                              ? 'border-primary bg-primary/10' 
+                              : 'border-border hover:border-primary/50'
+                          }`}
+                          onClick={() => setSelectedRoundId(selectedRoundId === round.id ? "" : round.id)}
+                        >
+                          <div>
+                            <h3 className="font-bold">
+                              Round {round.round_number}: {round.title}
+                            </h3>
+                          </div>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteRound(round.id);
+                            }}
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </Card>
+            )}
+
+            {/* Create/Edit Question */}
+            {selectedGameId && (
+              <Card className="p-6 bg-card border-border">
+                <h2 className="text-2xl font-bold mb-4">
+                  {editingQuestionId ? "Edit Question" : "Create New Question"}
+                </h2>
+                <form onSubmit={handleCreateOrUpdateQuestion} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="question-type">Question Type</Label>
                     <select
@@ -423,6 +633,16 @@ const Admin = () => {
                       value={questionImageUrl}
                       onChange={(e) => setQuestionImageUrl(e.target.value)}
                       placeholder="https://..."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="image-caption">Image Caption/Reference (optional)</Label>
+                    <Input
+                      id="image-caption"
+                      value={imageCaption}
+                      onChange={(e) => setImageCaption(e.target.value)}
+                      placeholder="Additional context about the image"
                     />
                   </div>
 
@@ -508,10 +728,26 @@ const Admin = () => {
                       placeholder={questionType === "text_input" ? "Provide context or information about the question" : "Explain why this is the correct answer"}
                     />
                   </div>
-                  <Button type="submit" variant="uplight">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create Question
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button type="submit" variant="uplight">
+                      {editingQuestionId ? (
+                        <>
+                          <Pencil className="w-4 h-4 mr-2" />
+                          Update Question
+                        </>
+                      ) : (
+                        <>
+                          <Plus className="w-4 h-4 mr-2" />
+                          Create Question
+                        </>
+                      )}
+                    </Button>
+                    {editingQuestionId && (
+                      <Button type="button" variant="ghost" onClick={clearQuestionForm}>
+                        Cancel
+                      </Button>
+                    )}
+                  </div>
                 </form>
               </Card>
             )}
@@ -519,7 +755,10 @@ const Admin = () => {
             {/* Questions List */}
             {selectedGameId && (
               <Card className="p-6 bg-card border-border">
-                <h2 className="text-2xl font-bold mb-4">Questions</h2>
+                <h2 className="text-2xl font-bold mb-4">
+                  Questions {selectedRoundId && rounds.find(r => r.id === selectedRoundId) && 
+                    `- ${rounds.find(r => r.id === selectedRoundId)?.title}`}
+                </h2>
                 {questions.length === 0 ? (
                   <p className="text-muted-foreground">No questions yet</p>
                 ) : (
@@ -527,7 +766,7 @@ const Admin = () => {
                     {questions.map((question, index) => (
                       <div
                         key={question.id}
-                        className="p-4 border border-border rounded-lg"
+                        className="p-4 border border-border rounded-[24px]"
                       >
                         <div className="flex justify-between items-start mb-2">
                           <div>
@@ -545,16 +784,30 @@ const Admin = () => {
                               Q{index + 1}: {question.question_text}
                             </h3>
                           </div>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleDeleteQuestion(question.id)}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEditQuestion(question)}
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleDeleteQuestion(question.id)}
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </div>
                         {question.question_image_url && (
-                          <img src={question.question_image_url} alt="Question" className="w-32 h-32 object-cover rounded mb-2" />
+                          <div className="mb-2">
+                            <img src={question.question_image_url} alt="Question" className="w-32 h-32 object-cover rounded mb-1" />
+                            {question.image_caption && (
+                              <p className="text-xs text-muted-foreground italic">{question.image_caption}</p>
+                            )}
+                          </div>
                         )}
                         <div className="space-y-1 text-sm">
                           {question.question_type === "multiple_choice" ? (

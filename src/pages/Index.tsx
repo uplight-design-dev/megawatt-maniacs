@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -7,12 +7,45 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import megawattLogo from "@/assets/megawatt-logo.png";
 
+interface LeaderboardEntry {
+  id: string;
+  score: number;
+  created_at: string;
+  users: {
+    name: string;
+  };
+}
+
 const Index = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+  const [leaderboardLoading, setLeaderboardLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    loadLeaderboard();
+  }, []);
+
+  const loadLeaderboard = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("leaderboard")
+        .select("id, score, created_at, users(name)")
+        .order("score", { ascending: false })
+        .order("created_at", { ascending: true })
+        .limit(10);
+
+      if (error) throw error;
+      setLeaderboard(data || []);
+    } catch (error) {
+      console.error("Error loading leaderboard:", error);
+    } finally {
+      setLeaderboardLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -213,6 +246,122 @@ const Index = () => {
               </div>
             </form>
           </Card>
+        </div>
+
+        {/* Leaderboard Island */}
+        <div 
+          className="bg-white mx-auto animate-fade-in" 
+          style={{ 
+            maxWidth: "900px",
+            padding: "70px",
+            borderRadius: "24px",
+            animationDelay: "0.4s"
+          }}
+        >
+          <h2 className="text-4xl font-bold mb-8 text-uplight-black">
+            Leaderboard
+          </h2>
+          
+          {leaderboardLoading ? (
+            <div className="text-center py-12">
+              <p className="text-lg" style={{ color: "#88889C" }}>Loading leaderboard...</p>
+            </div>
+          ) : leaderboard.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-lg" style={{ color: "#88889C" }}>No scores yet. Be the first to play!</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {leaderboard.map((entry, index) => {
+                const isTopThree = index < 3;
+                const avatarSrc = index === 0 
+                  ? "/first-place-avatar.svg"
+                  : index === 1 
+                  ? "/second-place-avatar.svg"
+                  : index === 2
+                  ? "/third-place-avatar.svg"
+                  : "/default-avatar-white.svg";
+                
+                return (
+                  <div
+                    key={entry.id}
+                    className="flex items-center gap-6 p-5 transition-all hover:translate-x-1"
+                    style={{
+                      backgroundColor: isTopThree ? "#F5F7FF" : "#FFFFFF",
+                      border: isTopThree ? "2px solid #0047FF" : "1px solid #E5E7EB",
+                      borderRadius: "16px"
+                    }}
+                  >
+                    {/* Rank & Avatar */}
+                    <div className="flex items-center gap-4">
+                      <div 
+                        className="flex items-center justify-center font-bold"
+                        style={{
+                          width: "48px",
+                          height: "48px",
+                          fontSize: "20px",
+                          color: isTopThree ? "#0047FF" : "#88889C",
+                          backgroundColor: isTopThree ? "#FFFFFF" : "#F9FAFB",
+                          borderRadius: "12px"
+                        }}
+                      >
+                        {index + 1}
+                      </div>
+                      <img 
+                        src={avatarSrc} 
+                        alt={`${entry.users.name} avatar`}
+                        style={{
+                          width: "56px",
+                          height: "56px",
+                          borderRadius: "50%",
+                          backgroundColor: isTopThree ? "#0047FF" : "#E5E7EB",
+                          padding: "4px"
+                        }}
+                      />
+                    </div>
+                    
+                    {/* User Info */}
+                    <div className="flex-1">
+                      <p 
+                        className="font-bold mb-1"
+                        style={{
+                          fontSize: "18px",
+                          color: "#000000"
+                        }}
+                      >
+                        {entry.users.name}
+                      </p>
+                      <p 
+                        style={{
+                          fontSize: "14px",
+                          color: "#88889C"
+                        }}
+                      >
+                        {new Date(entry.created_at).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric'
+                        })}
+                      </p>
+                    </div>
+                    
+                    {/* Score */}
+                    <div 
+                      className="font-bold"
+                      style={{
+                        fontSize: "28px",
+                        color: isTopThree ? "#0047FF" : "#000000",
+                        minWidth: "60px",
+                        textAlign: "right"
+                      }}
+                    >
+                      {entry.score}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Admin link - positioned at bottom right */}

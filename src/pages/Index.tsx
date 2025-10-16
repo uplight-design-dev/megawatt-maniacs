@@ -269,7 +269,7 @@ const Index = () => {
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "top center",
-          paddingTop: "80px",
+          paddingTop: "60px",
           paddingBottom: "120px",
         }}
       >
@@ -278,12 +278,12 @@ const Index = () => {
           className="bg-white mx-auto animate-fade-in" 
           style={{ 
             maxWidth: "900px",
-            padding: "70px",
+            padding: "50px 70px 70px 70px",
             borderRadius: "24px",
             animationDelay: "0.4s"
           }}
         >
-          <h2 className="text-4xl font-bold mb-8 text-uplight-black">
+          <h2 className="mb-8 text-uplight-black font-normal" style={{ fontFamily: 'Mark OT', fontWeight: 400, fontSize: '42px' }}>
             Leaderboard
           </h2>
           
@@ -296,111 +296,112 @@ const Index = () => {
               <p className="text-lg" style={{ color: "#88889C" }}>No scores yet. Be the first to play!</p>
             </div>
           ) : (
-            <div className="space-y-4">
-              {leaderboard.map((entry, index) => {
-                const isTopThree = index < 3;
-                const avatarSrc = index === 0 
-                  ? "/first-place-avatar.svg"
-                  : index === 1 
-                  ? "/second-place-avatar.svg"
-                  : index === 2
-                  ? "/third-place-avatar.svg"
-                  : "/default-avatar-white.svg";
-                
-                return (
-                  <div
-                    key={entry.id}
-                    className="flex items-center gap-6 p-5 transition-all hover:translate-x-1"
-                    style={{
-                      backgroundColor: isTopThree ? "#F5F7FF" : "#FFFFFF",
-                      border: isTopThree ? "2px solid #0047FF" : "1px solid #E5E7EB",
-                      borderRadius: "16px"
-                    }}
-                  >
-                    {/* Rank & Avatar */}
-                    <div className="flex items-center gap-4">
-                      <div 
-                        className="flex items-center justify-center font-bold"
-                        style={{
-                          width: "48px",
-                          height: "48px",
-                          fontSize: "20px",
-                          color: isTopThree ? "#0047FF" : "#88889C",
-                          backgroundColor: isTopThree ? "#FFFFFF" : "#F9FAFB",
-                          borderRadius: "12px"
-                        }}
-                      >
-                        {index + 1}
-                      </div>
-                      <img 
-                        src={avatarSrc} 
-                        alt={`${entry.users.name} avatar`}
-                        style={{
-                          width: "56px",
-                          height: "56px",
-                          borderRadius: "50%",
-                          backgroundColor: isTopThree ? "#0047FF" : "#E5E7EB",
-                          padding: "4px"
-                        }}
-                      />
-                    </div>
-                    
-                    {/* User Info */}
-                    <div className="flex-1">
-                      <p 
-                        className="font-bold mb-1"
-                        style={{
-                          fontSize: "18px",
-                          color: "#000000"
-                        }}
-                      >
-                        {entry.users.name}
-                      </p>
-                      <p 
-                        style={{
-                          fontSize: "14px",
-                          color: "#88889C"
-                        }}
-                      >
-                        {new Date(entry.created_at).toLocaleDateString('en-US', {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric'
-                        })}
-                      </p>
-                    </div>
-                    
-                    {/* Score */}
-                    <div 
-                      className="font-bold"
+            <div>
+              {/* Column headers */}
+              <div
+                className="items-center pb-6"
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 140px 140px',
+                  color: '#88889C',
+                  fontFamily: 'Mark OT',
+                  fontWeight: 500,
+                  fontSize: '15px',
+                }}
+              >
+                <div></div>
+                <div className="text-center">Points</div>
+                <div className="text-center">Games Played</div>
+              </div>
+
+              {/* Rows */}
+              <div>
+                {leaderboard.map((entry, index) => {
+                  const isTopThree = index < 3;
+                  const badgeSrc = index === 0
+                    ? "/first-place-avatar.svg"
+                    : index === 1
+                    ? "/second-place-avatar.svg"
+                    : index === 2
+                    ? "/third-place-avatar.svg"
+                    : undefined;
+                  const gamesPlayed = 4; // placeholder to match mockup layout
+
+                  return (
+                    <div
+                      key={entry.id}
+                      className="items-center py-4 border-b last:border-b-0"
                       style={{
-                        fontSize: "28px",
-                        color: isTopThree ? "#0047FF" : "#000000",
-                        minWidth: "60px",
-                        textAlign: "right"
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 140px 140px',
+                        borderColor: '#E6E9F3',
                       }}
                     >
-                      {entry.score}
+                      {/* Name + Rank */}
+                      <div className="flex items-center gap-4 min-w-0">
+                        {badgeSrc ? (
+                          <img src={badgeSrc} alt={`Rank ${index + 1}`} style={{ width: '45px', height: '45px' }} />
+                        ) : (
+                          <div style={{ width: '45px', height: '45px' }}></div>
+                        )}
+                        <div
+                          className="truncate"
+                          style={{
+                            fontFamily: 'Mark OT',
+                            fontWeight: isTopThree ? 700 : 400,
+                            fontSize: isTopThree ? '21px' : '16px',
+                            color: '#000000',
+                          }}
+                        >
+                          {`${index + 1}. ${entry.users.name}`}
+                        </div>
+                      </div>
+
+                      {/* Points */}
+                      <div
+                        className="text-center"
+                        style={{ fontFamily: 'Mark OT', fontWeight: 500, fontSize: '18px', color: '#000000' }}
+                      >
+                        {entry.score.toLocaleString()}
+                      </div>
+
+                      {/* Games Played */}
+                      <div
+                        className="text-center"
+                        style={{ fontFamily: 'Mark OT', fontWeight: 500, fontSize: '18px', color: '#000000' }}
+                      >
+                        {gamesPlayed}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* Admin link - positioned at bottom right */}
-      <div className="fixed bottom-4 right-4">
-          <Button 
-            variant="ghost" 
-            size="sm"
-            onClick={() => navigate("/admin")}
-            className="text-white/70 hover:text-white hover:bg-white/10"
-          >
-            Admin Access
-          </Button>
-      </div>
+      {/* Footer */}
+      <footer className="w-full py-8" style={{ backgroundColor: 'rgba(255, 255, 255, 0)' }}>
+        <div className="flex justify-center items-center relative">
+          <img 
+            src="/uplight-footer@2x.png" 
+            alt="Uplight Footer" 
+            className="max-w-[425px] w-full h-auto"
+          />
+          {/* Admin link - positioned at right side */}
+          <div className="absolute" style={{ right: '25px' }}>
+            <Button 
+              variant="ghost" 
+              size="sm"
+              onClick={() => navigate("/admin")}
+              className="text-white/70 hover:text-white hover:bg-white/10"
+            >
+              Admin Access
+            </Button>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

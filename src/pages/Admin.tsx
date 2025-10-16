@@ -72,6 +72,9 @@ const Admin = () => {
   const [answerD, setAnswerD] = useState("");
   const [correctAnswer, setCorrectAnswer] = useState("A");
   const [explanation, setExplanation] = useState("");
+  
+  // Display name in header
+  const userName = "Admin";
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -373,75 +376,216 @@ const Admin = () => {
     loadQuestions(selectedRoundId || selectedGameId);
   };
 
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+    } catch (e) {
+      // no-op
+    } finally {
+      setIsAuthenticated(false);
+      navigate("/");
+    }
+  };
+
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="w-full max-w-md p-8 bg-card border-border">
-          <h1 className="text-3xl font-bold mb-6 text-center">Admin Login</h1>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <Button type="submit" variant="uplight" size="lg" className="w-full">
-              Login
-            </Button>
-          </form>
-          <div className="mt-4 text-center">
-            <Button variant="ghost" size="sm" onClick={() => navigate("/")}>
-              <Home className="w-4 h-4 mr-2" />
-              Back to Home
-            </Button>
+      <div className="min-h-screen">
+        {/* Top hero section with background */}
+        <div
+          className="w-full min-h-screen flex items-center justify-center"
+          style={{
+            backgroundImage: "url('/blue-background.jpg')",
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="w-full flex items-center justify-center" style={{ maxWidth: "900px", margin: "0 auto", padding: "40px 0" }}>
+            {/* Admin Login Card */}
+            <Card className="bg-white animate-fade-in max-w-[415px] w-full mx-auto" style={{ animationDelay: "0.2s", padding: "40px" }}>
+              <h2 className="text-3xl font-bold mb-2 text-uplight-black">
+                Admin Login
+              </h2>
+              <p className="mb-6" style={{ 
+                color: "#000000", 
+                fontSize: "15px", 
+                lineHeight: "140%", 
+                fontWeight: 400 
+              }}>
+                Enter your credentials to access the admin dashboard
+              </p>
+              
+              <form onSubmit={handleLogin} className="space-y-4">
+                <Input
+                  id="username"
+                  type="text"
+                  placeholder="Username"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors"
+                  style={{ 
+                    backgroundColor: "#FCFCFF",
+                    borderColor: "#CCD6FF",
+                    color: "#000000",
+                    borderWidth: "1px",
+                    borderRadius: "0px",
+                    fontSize: "18px",
+                    fontWeight: 400
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = "#0047FF";
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = "#CCD6FF";
+                  }}
+                  required
+                />
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors"
+                  style={{ 
+                    backgroundColor: "#FCFCFF",
+                    borderColor: "#CCD6FF",
+                    color: "#000000",
+                    borderWidth: "1px",
+                    borderRadius: "0px",
+                    fontSize: "18px",
+                    fontWeight: 400
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.borderColor = "#0047FF";
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.borderColor = "#CCD6FF";
+                  }}
+                  required
+                />
+                
+                <div className="space-y-3">
+                  <Button 
+                    type="submit"
+                    size="lg"
+                    className="rounded-[99px] text-white text-lg font-medium transition-all hover:opacity-90 w-full"
+                    style={{
+                      backgroundColor: "#0047FF",
+                      boxShadow: "0px 6px 24px 0px rgba(0,71,255,0.47)",
+                      border: "1px solid rgba(0,0,0,0.2)",
+                      height: "51px"
+                    }}
+                  >
+                    Login
+                  </Button>
+                  
+                  <div className="flex justify-center">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      onClick={() => navigate("/")}
+                      className="text-sm transition-colors hover:text-[#0047FF] hover:bg-transparent"
+                      style={{ color: "#88889C" }}
+                    >
+                      <Home className="w-4 h-4 mr-2" />
+                      Back to Home
+                    </Button>
+                  </div>
+                </div>
+              </form>
+            </Card>
           </div>
-        </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold">Admin Dashboard</h1>
-          <Button variant="ghost" onClick={() => navigate("/")}>
-            <Home className="w-5 h-5 mr-2" />
-            Home
-          </Button>
+    <div className="min-h-screen pattern-background">
+      {/* Header Navbar (matches Game page) */}
+      <div style={{ 
+        position: "fixed",
+        top: "0",
+        left: "0",
+        right: "0",
+        zIndex: "50",
+        height: "105px",
+        display: "flex",
+        alignItems: "center",
+        paddingLeft: "50px", 
+        paddingRight: "50px",
+        backgroundColor: "rgba(255, 255, 255, 0.01)",
+        backdropFilter: "blur(10px)",
+        WebkitBackdropFilter: "blur(10px)",
+        width: "100vw"
+      }}>
+        <img src="/megawatt-maniac-white-logo.svg" alt="Megawatt Maniacs" className="w-[204px] h-[62px]" />
+        <div className="flex-1 flex justify-center" style={{ marginLeft: "-102px" }}>
+          <div className="flex items-center gap-3">
+            <img src="/default-avatar-white.svg" alt="User Avatar" className="w-8 h-8" />
+            <span className="text-white font-medium">{userName}</span>
+          </div>
         </div>
+        <img src="/back-bento@2x.png" alt="Menu" className="w-[37px] h-[35px]" />
+      </div>
 
-        <Tabs defaultValue="games" className="space-y-6">
+      {/* Spacer to ensure proper background coverage */}
+      <div className="h-[20px]"></div>
+
+      <div className="mx-auto" style={{ width: "900px", marginTop: "195px", paddingBottom: "40px" }}>
+        <Card className="bg-white rounded-2xl shadow-lg text-black" style={{ paddingLeft: "40px", paddingRight: "40px", paddingTop: "40px", paddingBottom: "50px" }}>
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold text-black">Admin Dashboard</h1>
+            <Button variant="ghost" onClick={handleSignOut} className="text-sm transition-colors hover:text-[#0047FF] hover:bg-transparent" style={{ color: "#88889C" }}>
+              Sign Out
+            </Button>
+          </div>
+
+          <Tabs defaultValue="games" className="space-y-6">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="games">Manage Games</TabsTrigger>
-            <TabsTrigger value="questions">Manage Questions</TabsTrigger>
+            <TabsTrigger 
+              value="games"
+              className="data-[state=active]:bg-[#CCD6FF] data-[state=active]:text-[#0047FF]"
+            >
+              Manage Games
+            </TabsTrigger>
+            <TabsTrigger 
+              value="questions"
+              className="data-[state=active]:bg-[#CCD6FF] data-[state=active]:text-[#0047FF]"
+            >
+              Manage Questions
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="games" className="space-y-6">
             {/* Create Game */}
-            <Card className="p-6 bg-card border-border">
+            <Card className="p-6 bg-white border border-border rounded-2xl text-black">
               <h2 className="text-2xl font-bold mb-4">Create New Game</h2>
               <form onSubmit={handleCreateGame} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="game-title">Title</Label>
                   <Input
                     id="game-title"
+                    type="text"
                     value={gameTitle}
                     onChange={(e) => setGameTitle(e.target.value)}
+                    className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors text-black placeholder:text-gray-400"
+                    style={{ 
+                      backgroundColor: "#FCFCFF",
+                      borderColor: "#CCD6FF",
+                      color: "#000000",
+                      borderWidth: "1px",
+                      borderRadius: "0px",
+                      fontSize: "18px",
+                      fontWeight: 400
+                    }}
+                    onFocus={(e) => {
+                      (e.target as HTMLInputElement).style.borderColor = "#0047FF";
+                    }}
+                    onBlur={(e) => {
+                      (e.target as HTMLInputElement).style.borderColor = "#CCD6FF";
+                    }}
                     required
                   />
                 </div>
@@ -451,17 +595,43 @@ const Admin = () => {
                     id="game-description"
                     value={gameDescription}
                     onChange={(e) => setGameDescription(e.target.value)}
+                    className="text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors text-black placeholder:text-gray-400"
+                    style={{ 
+                      backgroundColor: "#FCFCFF",
+                      borderColor: "#CCD6FF",
+                      color: "#000000",
+                      borderWidth: "1px",
+                      borderRadius: "0px",
+                      fontSize: "18px",
+                      fontWeight: 400
+                    }}
+                    onFocus={(e) => {
+                      (e.target as HTMLTextAreaElement).style.borderColor = "#0047FF";
+                    }}
+                    onBlur={(e) => {
+                      (e.target as HTMLTextAreaElement).style.borderColor = "#CCD6FF";
+                    }}
                   />
                 </div>
-                <Button type="submit" variant="uplight">
-                  <Plus className="w-4 h-4 mr-2" />
+                <Button 
+                  type="submit"
+                  size="lg"
+                  className="rounded-[99px] text-white text-lg font-medium transition-all hover:opacity-90"
+                  style={{
+                    backgroundColor: "#0047FF",
+                    boxShadow: "0px 6px 24px 0px rgba(0,71,255,0.47)",
+                    border: "1px solid rgba(0,0,0,0.2)",
+                    width: "197px",
+                    height: "51px"
+                  }}
+                >
                   Create Game
                 </Button>
               </form>
             </Card>
 
             {/* Games List */}
-            <Card className="p-6 bg-card border-border">
+            <Card className="p-6 bg-white border border-border rounded-2xl text-black">
               <h2 className="text-2xl font-bold mb-4">Existing Games</h2>
               {games.length === 0 ? (
                 <p className="text-muted-foreground">No games yet</p>
@@ -474,12 +644,13 @@ const Admin = () => {
                     >
                       <div>
                         <h3 className="font-bold text-lg">{game.title}</h3>
-                        <p className="text-sm text-muted-foreground">{game.description}</p>
+                        <p className="text-sm" style={{ color: "#4B5563" }}>{game.description}</p>
                       </div>
                       <Button
-                        variant="destructive"
+                        variant="ghost"
                         size="sm"
                         onClick={() => handleDeleteGame(game.id)}
+                        className="p-2 hover:bg-transparent text-[#EF4444]"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -493,11 +664,11 @@ const Admin = () => {
           <TabsContent value="questions" className="space-y-6">
             {/* Select Game */}
             {games.length > 0 && (
-              <Card className="p-6 bg-card border-border">
+              <Card className="p-6 bg-white border border-border rounded-2xl text-black">
                 <Label htmlFor="game-select">Select Game</Label>
                 <select
                   id="game-select"
-                  className="w-full mt-2 p-2 bg-background border border-border rounded-md"
+                  className="w-full mt-2 p-2 bg-white border border-black rounded-md text-black"
                   value={selectedGameId}
                   onChange={(e) => setSelectedGameId(e.target.value)}
                 >
@@ -512,7 +683,7 @@ const Admin = () => {
 
             {/* Manage Rounds */}
             {selectedGameId && (
-              <Card className="p-6 bg-card border-border">
+              <Card className="p-6 bg-white border border-border rounded-2xl text-black">
                 <h2 className="text-2xl font-bold mb-4">Manage Rounds</h2>
                 
                 {/* Create Round Form */}
@@ -525,6 +696,22 @@ const Admin = () => {
                         value={roundTitle}
                         onChange={(e) => setRoundTitle(e.target.value)}
                         placeholder="e.g., Opening Round"
+                        className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors text-black placeholder:text-gray-400"
+                        style={{ 
+                          backgroundColor: "#FCFCFF",
+                          borderColor: "#CCD6FF",
+                          color: "#000000",
+                          borderWidth: "1px",
+                          borderRadius: "0px",
+                          fontSize: "18px",
+                          fontWeight: 400
+                        }}
+                        onFocus={(e) => {
+                          (e.target as HTMLInputElement).style.borderColor = "#0047FF";
+                        }}
+                        onBlur={(e) => {
+                          (e.target as HTMLInputElement).style.borderColor = "#CCD6FF";
+                        }}
                         required
                       />
                     </div>
@@ -536,12 +723,38 @@ const Admin = () => {
                         min="1"
                         value={roundNumber}
                         onChange={(e) => setRoundNumber(parseInt(e.target.value))}
+                        className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors text-black placeholder:text-gray-400"
+                        style={{ 
+                          backgroundColor: "#FCFCFF",
+                          borderColor: "#CCD6FF",
+                          color: "#000000",
+                          borderWidth: "1px",
+                          borderRadius: "0px",
+                          fontSize: "18px",
+                          fontWeight: 400
+                        }}
+                        onFocus={(e) => {
+                          (e.target as HTMLInputElement).style.borderColor = "#0047FF";
+                        }}
+                        onBlur={(e) => {
+                          (e.target as HTMLInputElement).style.borderColor = "#CCD6FF";
+                        }}
                         required
                       />
                     </div>
                   </div>
-                  <Button type="submit" variant="uplight">
-                    <Plus className="w-4 h-4 mr-2" />
+                  <Button 
+                    type="submit"
+                    size="lg"
+                    className="rounded-[99px] text-white text-lg font-medium transition-all hover:opacity-90"
+                    style={{
+                      backgroundColor: "#0047FF",
+                      boxShadow: "0px 6px 24px 0px rgba(0,71,255,0.47)",
+                      border: "1px solid rgba(0,0,0,0.2)",
+                      width: "197px",
+                      height: "51px"
+                    }}
+                  >
                     Create Round
                   </Button>
                 </form>
@@ -569,12 +782,13 @@ const Admin = () => {
                             </h3>
                           </div>
                           <Button
-                            variant="destructive"
+                            variant="ghost"
                             size="sm"
                             onClick={(e) => {
                               e.stopPropagation();
                               handleDeleteRound(round.id);
                             }}
+                            className="p-2 hover:bg-transparent text-[#EF4444]"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -588,7 +802,7 @@ const Admin = () => {
 
             {/* Create/Edit Question */}
             {selectedGameId && (
-              <Card className="p-6 bg-card border-border">
+              <Card className="p-6 bg-white border border-border rounded-2xl text-black">
                 <h2 className="text-2xl font-bold mb-4">
                   {editingQuestionId ? "Edit Question" : "Create New Question"}
                 </h2>
@@ -597,7 +811,22 @@ const Admin = () => {
                     <Label htmlFor="question-type">Question Type</Label>
                     <select
                       id="question-type"
-                      className="w-full p-2 bg-background border border-border rounded-md"
+                      className="w-full p-2 bg-background border border-border rounded-md text-black h-[59px] text-lg font-normal focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors"
+                      style={{ 
+                        backgroundColor: "#FCFCFF",
+                        borderColor: "#CCD6FF",
+                        color: "#000000",
+                        borderWidth: "1px",
+                        borderRadius: "0px",
+                        fontSize: "18px",
+                        fontWeight: 400
+                      }}
+                      onFocus={(e) => {
+                        (e.target as HTMLSelectElement).style.borderColor = "#0047FF";
+                      }}
+                      onBlur={(e) => {
+                        (e.target as HTMLSelectElement).style.borderColor = "#CCD6FF";
+                      }}
                       value={questionType}
                       onChange={(e) => setQuestionType(e.target.value as "multiple_choice" | "text_input")}
                     >
@@ -613,6 +842,22 @@ const Admin = () => {
                       value={category}
                       onChange={(e) => setCategory(e.target.value)}
                       placeholder="e.g., History, Science"
+                      className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors text-black placeholder:text-gray-400"
+                      style={{ 
+                        backgroundColor: "#FCFCFF",
+                        borderColor: "#CCD6FF",
+                        color: "#000000",
+                        borderWidth: "1px",
+                        borderRadius: "0px",
+                        fontSize: "18px",
+                        fontWeight: 400
+                      }}
+                      onFocus={(e) => {
+                        (e.target as HTMLInputElement).style.borderColor = "#0047FF";
+                      }}
+                      onBlur={(e) => {
+                        (e.target as HTMLInputElement).style.borderColor = "#CCD6FF";
+                      }}
                     />
                   </div>
 
@@ -622,6 +867,22 @@ const Admin = () => {
                       id="question"
                       value={questionText}
                       onChange={(e) => setQuestionText(e.target.value)}
+                      className="text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors text-black placeholder:text-gray-400"
+                      style={{ 
+                        backgroundColor: "#FCFCFF",
+                        borderColor: "#CCD6FF",
+                        color: "#000000",
+                        borderWidth: "1px",
+                        borderRadius: "0px",
+                        fontSize: "18px",
+                        fontWeight: 400
+                      }}
+                      onFocus={(e) => {
+                        (e.target as HTMLTextAreaElement).style.borderColor = "#0047FF";
+                      }}
+                      onBlur={(e) => {
+                        (e.target as HTMLTextAreaElement).style.borderColor = "#CCD6FF";
+                      }}
                       required
                     />
                   </div>
@@ -633,6 +894,22 @@ const Admin = () => {
                       value={questionImageUrl}
                       onChange={(e) => setQuestionImageUrl(e.target.value)}
                       placeholder="https://..."
+                      className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors text-black placeholder:text-gray-400"
+                      style={{ 
+                        backgroundColor: "#FCFCFF",
+                        borderColor: "#CCD6FF",
+                        color: "#000000",
+                        borderWidth: "1px",
+                        borderRadius: "0px",
+                        fontSize: "18px",
+                        fontWeight: 400
+                      }}
+                      onFocus={(e) => {
+                        (e.target as HTMLInputElement).style.borderColor = "#0047FF";
+                      }}
+                      onBlur={(e) => {
+                        (e.target as HTMLInputElement).style.borderColor = "#CCD6FF";
+                      }}
                     />
                   </div>
 
@@ -643,6 +920,22 @@ const Admin = () => {
                       value={imageCaption}
                       onChange={(e) => setImageCaption(e.target.value)}
                       placeholder="Additional context about the image"
+                      className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors text-black placeholder:text-gray-400"
+                      style={{ 
+                        backgroundColor: "#FCFCFF",
+                        borderColor: "#CCD6FF",
+                        color: "#000000",
+                        borderWidth: "1px",
+                        borderRadius: "0px",
+                        fontSize: "18px",
+                        fontWeight: 400
+                      }}
+                      onFocus={(e) => {
+                        (e.target as HTMLInputElement).style.borderColor = "#0047FF";
+                      }}
+                      onBlur={(e) => {
+                        (e.target as HTMLInputElement).style.borderColor = "#CCD6FF";
+                      }}
                     />
                   </div>
 
@@ -655,6 +948,22 @@ const Admin = () => {
                             id="answer-a"
                             value={answerA}
                             onChange={(e) => setAnswerA(e.target.value)}
+                            className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors text-black placeholder:text-gray-400"
+                            style={{ 
+                              backgroundColor: "#FCFCFF",
+                              borderColor: "#CCD6FF",
+                              color: "#000000",
+                              borderWidth: "1px",
+                              borderRadius: "0px",
+                              fontSize: "18px",
+                              fontWeight: 400
+                            }}
+                            onFocus={(e) => {
+                              (e.target as HTMLInputElement).style.borderColor = "#0047FF";
+                            }}
+                            onBlur={(e) => {
+                              (e.target as HTMLInputElement).style.borderColor = "#CCD6FF";
+                            }}
                             required
                           />
                         </div>
@@ -664,6 +973,22 @@ const Admin = () => {
                             id="answer-b"
                             value={answerB}
                             onChange={(e) => setAnswerB(e.target.value)}
+                            className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors text-black placeholder:text-gray-400"
+                            style={{ 
+                              backgroundColor: "#FCFCFF",
+                              borderColor: "#CCD6FF",
+                              color: "#000000",
+                              borderWidth: "1px",
+                              borderRadius: "0px",
+                              fontSize: "18px",
+                              fontWeight: 400
+                            }}
+                            onFocus={(e) => {
+                              (e.target as HTMLInputElement).style.borderColor = "#0047FF";
+                            }}
+                            onBlur={(e) => {
+                              (e.target as HTMLInputElement).style.borderColor = "#CCD6FF";
+                            }}
                             required
                           />
                         </div>
@@ -673,6 +998,22 @@ const Admin = () => {
                             id="answer-c"
                             value={answerC}
                             onChange={(e) => setAnswerC(e.target.value)}
+                            className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors text-black placeholder:text-gray-400"
+                            style={{ 
+                              backgroundColor: "#FCFCFF",
+                              borderColor: "#CCD6FF",
+                              color: "#000000",
+                              borderWidth: "1px",
+                              borderRadius: "0px",
+                              fontSize: "18px",
+                              fontWeight: 400
+                            }}
+                            onFocus={(e) => {
+                              (e.target as HTMLInputElement).style.borderColor = "#0047FF";
+                            }}
+                            onBlur={(e) => {
+                              (e.target as HTMLInputElement).style.borderColor = "#CCD6FF";
+                            }}
                             required
                           />
                         </div>
@@ -682,6 +1023,22 @@ const Admin = () => {
                             id="answer-d"
                             value={answerD}
                             onChange={(e) => setAnswerD(e.target.value)}
+                            className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors text-black placeholder:text-gray-400"
+                            style={{ 
+                              backgroundColor: "#FCFCFF",
+                              borderColor: "#CCD6FF",
+                              color: "#000000",
+                              borderWidth: "1px",
+                              borderRadius: "0px",
+                              fontSize: "18px",
+                              fontWeight: 400
+                            }}
+                            onFocus={(e) => {
+                              (e.target as HTMLInputElement).style.borderColor = "#0047FF";
+                            }}
+                            onBlur={(e) => {
+                              (e.target as HTMLInputElement).style.borderColor = "#CCD6FF";
+                            }}
                             required
                           />
                         </div>
@@ -690,7 +1047,22 @@ const Admin = () => {
                         <Label htmlFor="correct">Correct Answer</Label>
                         <select
                           id="correct"
-                          className="w-full p-2 bg-background border border-border rounded-md"
+                          className="w-full p-2 bg-background border border-border rounded-md text-black h-[59px] text-lg font-normal focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors"
+                          style={{ 
+                            backgroundColor: "#FCFCFF",
+                            borderColor: "#CCD6FF",
+                            color: "#000000",
+                            borderWidth: "1px",
+                            borderRadius: "0px",
+                            fontSize: "18px",
+                            fontWeight: 400
+                          }}
+                          onFocus={(e) => {
+                            (e.target as HTMLSelectElement).style.borderColor = "#0047FF";
+                          }}
+                          onBlur={(e) => {
+                            (e.target as HTMLSelectElement).style.borderColor = "#CCD6FF";
+                          }}
                           value={correctAnswer}
                           onChange={(e) => setCorrectAnswer(e.target.value)}
                         >
@@ -709,6 +1081,22 @@ const Admin = () => {
                         value={correctAnswer}
                         onChange={(e) => setCorrectAnswer(e.target.value)}
                         placeholder="Enter the exact answer"
+                        className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors text-black placeholder:text-gray-400"
+                        style={{ 
+                          backgroundColor: "#FCFCFF",
+                          borderColor: "#CCD6FF",
+                          color: "#000000",
+                          borderWidth: "1px",
+                          borderRadius: "0px",
+                          fontSize: "18px",
+                          fontWeight: 400
+                        }}
+                        onFocus={(e) => {
+                          (e.target as HTMLInputElement).style.borderColor = "#0047FF";
+                        }}
+                        onBlur={(e) => {
+                          (e.target as HTMLInputElement).style.borderColor = "#CCD6FF";
+                        }}
                         required
                       />
                       <p className="text-sm text-muted-foreground">
@@ -726,22 +1114,46 @@ const Admin = () => {
                       value={explanation}
                       onChange={(e) => setExplanation(e.target.value)}
                       placeholder={questionType === "text_input" ? "Provide context or information about the question" : "Explain why this is the correct answer"}
+                      className="text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors text-black placeholder:text-gray-400"
+                      style={{ 
+                        backgroundColor: "#FCFCFF",
+                        borderColor: "#CCD6FF",
+                        color: "#000000",
+                        borderWidth: "1px",
+                        borderRadius: "0px",
+                        fontSize: "18px",
+                        fontWeight: 400
+                      }}
+                      onFocus={(e) => {
+                        (e.target as HTMLTextAreaElement).style.borderColor = "#0047FF";
+                      }}
+                      onBlur={(e) => {
+                        (e.target as HTMLTextAreaElement).style.borderColor = "#CCD6FF";
+                      }}
                     />
                   </div>
                   <div className="flex gap-2">
-                    <Button type="submit" variant="uplight">
-                      {editingQuestionId ? (
-                        <>
-                          <Pencil className="w-4 h-4 mr-2" />
-                          Update Question
-                        </>
-                      ) : (
-                        <>
-                          <Plus className="w-4 h-4 mr-2" />
-                          Create Question
-                        </>
-                      )}
-                    </Button>
+                    {editingQuestionId ? (
+                      <Button type="submit" variant="uplight">
+                        <Pencil className="w-4 h-4 mr-2" />
+                        Update Question
+                      </Button>
+                    ) : (
+                      <Button 
+                        type="submit"
+                        size="lg"
+                        className="rounded-[99px] text-white text-lg font-medium transition-all hover:opacity-90"
+                        style={{
+                          backgroundColor: "#0047FF",
+                          boxShadow: "0px 6px 24px 0px rgba(0,71,255,0.47)",
+                          border: "1px solid rgba(0,0,0,0.2)",
+                          width: "197px",
+                          height: "51px"
+                        }}
+                      >
+                        Create Question
+                      </Button>
+                    )}
                     {editingQuestionId && (
                       <Button type="button" variant="ghost" onClick={clearQuestionForm}>
                         Cancel
@@ -754,7 +1166,7 @@ const Admin = () => {
 
             {/* Questions List */}
             {selectedGameId && (
-              <Card className="p-6 bg-card border-border">
+              <Card className="p-6 bg-white border border-border rounded-2xl text-black">
                 <h2 className="text-2xl font-bold mb-4">
                   Questions {selectedRoundId && rounds.find(r => r.id === selectedRoundId) && 
                     `- ${rounds.find(r => r.id === selectedRoundId)?.title}`}
@@ -771,11 +1183,11 @@ const Admin = () => {
                         <div className="flex justify-between items-start mb-2">
                           <div>
                             <div className="flex gap-2 mb-2">
-                              <span className="px-2 py-1 bg-primary/20 text-primary text-xs rounded">
+                              <span className="px-2 py-1 text-black text-xs rounded border border-black bg-white">
                                 {question.question_type === "multiple_choice" ? "Multiple Choice" : "Text Input"}
                               </span>
                               {question.category && (
-                                <span className="px-2 py-1 bg-secondary/20 text-secondary text-xs rounded">
+                                <span className="px-2 py-1 text-black text-xs rounded border border-black bg-white">
                                   {question.category}
                                 </span>
                               )}
@@ -785,27 +1197,29 @@ const Admin = () => {
                             </h3>
                           </div>
                           <div className="flex gap-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleEditQuestion(question)}
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </Button>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => handleDeleteQuestion(question.id)}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEditQuestion(question)}
+                            className="p-2 hover:bg-transparent text-[#0047FF]"
+                          >
+                            <Pencil className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteQuestion(question.id)}
+                            className="p-2 hover:bg-transparent text-[#EF4444]"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                           </div>
                         </div>
                         {question.question_image_url && (
                           <div className="mb-2">
                             <img src={question.question_image_url} alt="Question" className="w-32 h-32 object-cover rounded mb-1" />
                             {question.image_caption && (
-                              <p className="text-xs text-muted-foreground italic">{question.image_caption}</p>
+                              <p className="text-xs text-black italic">{question.image_caption}</p>
                             )}
                           </div>
                         )}
@@ -826,7 +1240,7 @@ const Admin = () => {
                             </p>
                           )}
                           {question.explanation && (
-                            <p className="text-muted-foreground italic">
+                            <p className="text-black italic">
                               {question.explanation}
                             </p>
                           )}
@@ -839,6 +1253,13 @@ const Admin = () => {
             )}
           </TabsContent>
         </Tabs>
+        </Card>
+      </div>
+
+      {/* Footer (matches Game page) */}
+      <div className="text-center" style={{ marginTop: "160px", paddingBottom: "32px" }}>
+        <img src="/uplight-white-green-logo@2x.png" alt="Uplight" className="w-[222px] mx-auto mb-2" />
+        <p className="text-white text-sm">Copyright © 2026 Uplight, Inc. All rights reserved.</p>
       </div>
     </div>
   );

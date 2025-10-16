@@ -343,14 +343,15 @@ const Game = () => {
           {/* Feedback after checking */}
           {hasCheckedAnswer && (
             <div className="mb-8">
-              <Alert variant={isCorrect ? 'default' : 'destructive'}>
+              <Alert
+                variant={isCorrect ? 'default' : 'destructive'}
+                className={isCorrect ? 'bg-white border border-[#00E297] text-[#00E297]' : 'border border-white'}
+              >
                 {isCorrect ? (
-                  <CheckCircle2 className="h-5 w-5" />
-                ) : (
-                  <XCircle className="h-5 w-5" />
-                )}
+                  <CheckCircle2 className="h-5 w-5 text-[#00E297]" />
+                ) : null}
                 <div>
-                  <AlertTitle>{isCorrect ? 'Correct!' : 'Incorrect'}</AlertTitle>
+                  <AlertTitle className={isCorrect ? 'text-[#00E297]' : undefined}>{isCorrect ? 'Correct!' : 'Incorrect'}</AlertTitle>
                   <AlertDescription>
                     {!isCorrect && (
                       <span>
@@ -393,7 +394,7 @@ const Game = () => {
               }}
             >
               {!hasCheckedAnswer
-                ? 'Check Answer'
+                ? 'Submit Answer'
                 : currentQuestionIndex < questions.length - 1
                   ? 'Next Question'
                   : 'See Results'}

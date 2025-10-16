@@ -120,10 +120,21 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen pattern-background">
-      <div className="w-full py-12" style={{ maxWidth: "900px", margin: "0 auto" }}>
-        {/* Main Hero Section */}
-        <div className="grid lg:grid-cols-2 gap-12 items-center mb-20">
+    <div className="min-h-screen">
+      {/* Top hero section with background */}
+      <div
+        className="w-full"
+        style={{
+          height: "570px",
+          backgroundImage: "url('/upper-header-background-hero@2x.jpg')",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="w-full h-full" style={{ maxWidth: "900px", margin: "0 auto", padding: "40px 0" }}>
+          {/* Main Hero Section */}
+          <div className="grid lg:grid-cols-2 gap-12 items-center h-full">
           {/* Left Side - Hero Mascot Logo */}
           <div className="text-center lg:text-left animate-fade-in">
             <img src="/hero-mascot-logo@2x.png" alt="Megawatt Maniacs Hero" className="w-full max-w-md mx-auto lg:mx-0" />
@@ -247,7 +258,21 @@ const Index = () => {
             </form>
           </Card>
         </div>
+        </div>
+      </div>
 
+      {/* Lower section background */}
+      <div
+        className="w-full"
+        style={{
+          backgroundImage: "url('/lite-lower-background@2x.jpg')",
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "top center",
+          paddingTop: "80px",
+          paddingBottom: "120px",
+        }}
+      >
         {/* Leaderboard Island */}
         <div 
           className="bg-white mx-auto animate-fade-in" 
@@ -363,9 +388,10 @@ const Index = () => {
             </div>
           )}
         </div>
+      </div>
 
-        {/* Admin link - positioned at bottom right */}
-        <div className="fixed bottom-4 right-4">
+      {/* Admin link - positioned at bottom right */}
+      <div className="fixed bottom-4 right-4">
           <Button 
             variant="ghost" 
             size="sm"
@@ -374,7 +400,6 @@ const Index = () => {
           >
             Admin Access
           </Button>
-        </div>
       </div>
     </div>
   );

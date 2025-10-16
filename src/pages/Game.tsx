@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { toast } from "sonner";
 import { CheckCircle2, XCircle } from "lucide-react";
 
@@ -31,6 +32,8 @@ const Game = () => {
   const [showExplanation, setShowExplanation] = useState(false);
   const [loading, setLoading] = useState(true);
   const [gameId, setGameId] = useState<string>("");
+  const [hasCheckedAnswer, setHasCheckedAnswer] = useState(false);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
   useEffect(() => {
     const userId = sessionStorage.getItem("userId");
@@ -85,17 +88,35 @@ const Game = () => {
 
   const handleAnswerSelect = (answer: string) => {
     setSelectedAnswer(answer);
+    setHasCheckedAnswer(false);
+    setIsCorrect(null);
   };
 
   const handleTextSubmit = () => {
-    // Just allow text input, no immediate feedback
+    if (!textAnswer.trim()) return;
+    const correct = textAnswer.trim().toLowerCase() === questions[currentQuestionIndex].correct_answer.toLowerCase();
+    setHasCheckedAnswer(true);
+    setIsCorrect(correct);
+  };
+
+  const handleCheckAnswer = () => {
+    if (questions[currentQuestionIndex].question_type === 'multiple_choice') {
+      if (!selectedAnswer) return;
+      const correct = selectedAnswer === questions[currentQuestionIndex].correct_answer;
+      setHasCheckedAnswer(true);
+      setIsCorrect(correct);
+    } else {
+      handleTextSubmit();
+    }
   };
 
   const handleNextQuestion = () => {
     // Check if answer is correct and update score
-    if (selectedAnswer === questions[currentQuestionIndex].correct_answer) {
-      setScore(score + 1);
-    } else if (textAnswer.trim().toLowerCase() === questions[currentQuestionIndex].correct_answer.toLowerCase()) {
+    const answeredCorrectly =
+      selectedAnswer === questions[currentQuestionIndex].correct_answer ||
+      textAnswer.trim().toLowerCase() === questions[currentQuestionIndex].correct_answer.toLowerCase();
+
+    if (answeredCorrectly) {
       setScore(score + 1);
     }
 
@@ -103,6 +124,8 @@ const Game = () => {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
       setSelectedAnswer(null);
       setTextAnswer("");
+      setHasCheckedAnswer(false);
+      setIsCorrect(null);
     } else {
       finishGame();
     }
@@ -242,11 +265,21 @@ const Game = () => {
             <div className="space-y-2 mb-8">
               {answers.map((answer) => {
                 const isSelected = selectedAnswer === answer.letter;
+                const isCorrectAnswer = answer.letter === currentQuestion.correct_answer;
+                const showChecked = hasCheckedAnswer;
 
                 return (
                   <label
                     key={answer.letter}
-                    className="flex items-center gap-4 cursor-pointer p-4 hover:bg-gray-50 rounded-lg transition-colors"
+                    className={`flex items-center gap-4 cursor-pointer p-4 rounded-lg transition-colors ${
+                      showChecked
+                        ? isCorrectAnswer
+                          ? 'bg-green-50'
+                          : isSelected
+                            ? 'bg-red-50'
+                            : 'bg-white'
+                        : 'hover:bg-gray-50'
+                    }`}
                   >
                     <div className="flex items-center">
                       <input
@@ -255,14 +288,20 @@ const Game = () => {
                         value={answer.letter}
                         checked={isSelected}
                         onChange={() => handleAnswerSelect(answer.letter)}
+                        disabled={hasCheckedAnswer}
                         className="sr-only"
                       />
                       <div className={`
                         w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all
-                        ${isSelected 
-                          ? 'border-green-500 bg-green-500' 
-                          : 'border-gray-300 bg-white'
-                        }
+                        ${showChecked
+                          ? isCorrectAnswer
+                            ? 'border-green-500 bg-green-500'
+                            : isSelected
+                              ? 'border-red-500 bg-red-500'
+                              : 'border-gray-300 bg-white'
+                          : isSelected
+                            ? 'border-green-500 bg-green-500'
+                            : 'border-gray-300 bg-white'}
                       `}>
                         {isSelected && (
                           <div className="w-3 h-3 bg-white rounded-full"></div>
@@ -290,17 +329,59 @@ const Game = () => {
                 className="bg-gray-50 border-gray-300 text-black"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
-                    handleTextSubmit();
+                    if (!hasCheckedAnswer) {
+                      handleTextSubmit();
+                    } else {
+                      handleNextQuestion();
+                    }
                   }
                 }}
               />
             </div>
           )}
 
+          {/* Feedback after checking */}
+          {hasCheckedAnswer && (
+            <div className="mb-8">
+              <Alert variant={isCorrect ? 'default' : 'destructive'}>
+                {isCorrect ? (
+                  <CheckCircle2 className="h-5 w-5" />
+                ) : (
+                  <XCircle className="h-5 w-5" />
+                )}
+                <div>
+                  <AlertTitle>{isCorrect ? 'Correct!' : 'Incorrect'}</AlertTitle>
+                  <AlertDescription>
+                    {!isCorrect && (
+                      <span>
+                        Correct answer: {currentQuestion.correct_answer}
+                        {currentQuestion.question_type === 'multiple_choice' && (
+                          <>
+                            {` - `}
+                            {answers.find(a => a.letter === currentQuestion.correct_answer)?.text}
+                          </>
+                        )}
+                      </span>
+                    )}
+                    {currentQuestion.explanation && (
+                      <div className="mt-2 text-gray-700">{currentQuestion.explanation}</div>
+                    )}
+                  </AlertDescription>
+                </div>
+              </Alert>
+            </div>
+          )}
+
           {/* Next Question Button */}
           <div className="flex justify-end" style={{ marginRight: "70px" }}>
             <Button
-              onClick={handleNextQuestion}
+              onClick={() => {
+                if (!hasCheckedAnswer) {
+                  handleCheckAnswer();
+                } else {
+                  handleNextQuestion();
+                }
+              }}
               disabled={!selectedAnswer && !textAnswer.trim()}
               className="rounded-[99px] text-white text-lg font-medium transition-all hover:opacity-90 flex items-center gap-2"
               style={{
@@ -311,7 +392,11 @@ const Game = () => {
                 height: "51px"
               }}
             >
-              {currentQuestionIndex < questions.length - 1 ? "Next Question" : "See Results"}
+              {!hasCheckedAnswer
+                ? 'Check Answer'
+                : currentQuestionIndex < questions.length - 1
+                  ? 'Next Question'
+                  : 'See Results'}
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>

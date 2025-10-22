@@ -14,6 +14,7 @@ interface Game {
   title: string;
   description: string;
   created_at: string;
+  is_active?: boolean;
 }
 
 interface Question {
@@ -54,6 +55,7 @@ const Admin = () => {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [selectedGameId, setSelectedGameId] = useState<string>("");
   const [editingQuestionId, setEditingQuestionId] = useState<string | null>(null);
+  const [activeGameId, setActiveGameId] = useState<string>("");
   
   // Question bank state
   const [questionBank, setQuestionBank] = useState<QuestionBankItem[]>([]);
@@ -85,6 +87,7 @@ const Admin = () => {
     if (isAuthenticated) {
       loadGames();
       loadQuestionBank();
+      loadActiveGame();
     }
   }, [isAuthenticated]);
 
@@ -388,6 +391,47 @@ const Admin = () => {
     } finally {
       setIsAuthenticated(false);
       navigate("/");
+    }
+  };
+
+  // Active game management functions
+  const loadActiveGame = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("games")
+        .select("id, is_active")
+        .eq("is_active", true)
+        .maybeSingle();
+      
+      if (!error && data) {
+        setActiveGameId(data.id);
+      }
+    } catch (err) {
+      console.error("Error loading active game:", err);
+      // If is_active column doesn't exist yet, that's okay
+    }
+  };
+
+  const handleSetActiveGame = async (gameId: string) => {
+    try {
+      // First, set all games to inactive
+      await supabase
+        .from("games")
+        .update({ is_active: false } as any);
+      
+      // Then set the selected game as active
+      const { error } = await supabase
+        .from("games")
+        .update({ is_active: true } as any)
+        .eq("id", gameId);
+      
+      if (error) throw error;
+      
+      setActiveGameId(gameId);
+      toast.success("Active game updated successfully");
+    } catch (error) {
+      console.error("Error setting active game:", error);
+      toast.error("Failed to update active game. The database migration may need to be run first.");
     }
   };
 
@@ -739,6 +783,55 @@ const Admin = () => {
                             <Trash2 className="w-4 h-4" />
                           </Button>
                         </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Card>
+
+              {/* Active Game Selection */}
+              <Card className="p-6 bg-white border border-border rounded-2xl text-black">
+                <h2 className="text-2xl font-bold mb-4">Set Active Game</h2>
+                <p className="text-sm text-gray-600 mb-4">
+                  Select which game players will automatically play when they start a new game.
+                </p>
+                {games.length === 0 ? (
+                  <p className="text-muted-foreground">No games available</p>
+                ) : (
+                  <div className="space-y-3">
+                    {games.map((game) => (
+                      <div
+                        key={game.id}
+                        className={`flex items-center justify-between p-4 border rounded-lg transition-colors ${
+                          activeGameId === game.id 
+                            ? 'border-green-500 bg-green-50' 
+                            : 'border-border hover:border-gray-300'
+                        }`}
+                      >
+                        <div>
+                          <h3 className="font-bold text-lg">{game.title}</h3>
+                          <p className="text-sm text-gray-600">{game.description}</p>
+                          {activeGameId === game.id && (
+                            <span className="inline-block mt-1 px-2 py-1 text-xs bg-green-100 text-green-800 rounded">
+                              Currently Active
+                            </span>
+                          )}
+                        </div>
+                        <Button
+                          onClick={() => handleSetActiveGame(game.id)}
+                          disabled={activeGameId === game.id}
+                          className="rounded-[99px] text-white text-sm font-medium transition-all"
+                          style={{
+                            backgroundColor: activeGameId === game.id ? "#10B981" : "#0047FF",
+                            opacity: activeGameId === game.id ? 0.7 : 1,
+                            boxShadow: activeGameId === game.id ? "none" : "0px 6px 24px 0px rgba(0,71,255,0.47)",
+                            border: "1px solid rgba(0,0,0,0.2)",
+                            height: "40px",
+                            width: "120px"
+                          }}
+                        >
+                          {activeGameId === game.id ? 'Active' : 'Set Active'}
+                        </Button>
                       </div>
                     ))}
                   </div>
@@ -1189,7 +1282,7 @@ const Admin = () => {
 
                 {/* Questions List */}
                 <div className="space-y-3 max-h-96 overflow-y-auto">
-                  {getFilteredQuestionBank().map((question) => (
+                  {getFilteredQuestionBank().map((question, index) => (
                     <div
                       key={question.id}
                       className={`p-4 border rounded-lg transition-colors ${
@@ -1199,15 +1292,20 @@ const Admin = () => {
                       }`}
                     >
                       <div className="flex items-start gap-3">
-                        <div 
-                          className="flex-shrink-0 mt-1 cursor-pointer"
-                          onClick={() => toggleBankQuestionSelection(question.id)}
-                        >
-                          {selectedBankQuestions.has(question.id) ? (
-                            <Check className="w-5 h-5 text-blue-600" />
-                          ) : (
-                            <div className="w-5 h-5 border-2 border-gray-300 rounded" />
-                          )}
+                        <div className="flex-shrink-0 flex items-center gap-3">
+                          <div className="flex-shrink-0 w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+                            <span className="text-sm font-medium text-gray-700">{index + 1}</span>
+                          </div>
+                          <div 
+                            className="cursor-pointer"
+                            onClick={() => toggleBankQuestionSelection(question.id)}
+                          >
+                            {selectedBankQuestions.has(question.id) ? (
+                              <Check className="w-5 h-5 text-blue-600" />
+                            ) : (
+                              <div className="w-5 h-5 border-2 border-gray-300 rounded" />
+                            )}
+                          </div>
                         </div>
                         <div 
                           className="flex-1 cursor-pointer"

@@ -17,6 +17,7 @@ interface Question {
   answer_d: string;
   correct_answer: string;
   explanation: string;
+  source?: string;
   question_type: string;
   question_image_url?: string;
   category?: string;
@@ -140,12 +141,28 @@ const Game = () => {
     }
 
     try {
-      // Save individual game score to leaderboard
-      await supabase.from("leaderboard").insert({
-        user_id: userId,
-        game_id: gameId,
-        score: score,
-      });
+      // Check if user already has a leaderboard entry
+      const { data: existingEntry } = await supabase
+        .from("leaderboard")
+        .select("id, score")
+        .eq("user_id", userId)
+        .single();
+
+      if (existingEntry) {
+        // Update existing entry with cumulative score
+        const newCumulativeScore = existingEntry.score + score;
+        await supabase
+          .from("leaderboard")
+          .update({ score: newCumulativeScore })
+          .eq("id", existingEntry.id);
+      } else {
+        // Create new entry for first-time player
+        await supabase.from("leaderboard").insert({
+          user_id: userId,
+          game_id: gameId,
+          score: score,
+        });
+      }
 
       // Update user's total cumulative score
       const { data: userData } = await supabase
@@ -193,7 +210,7 @@ const Game = () => {
     { letter: "B", text: currentQuestion.answer_b },
     { letter: "C", text: currentQuestion.answer_c },
     { letter: "D", text: currentQuestion.answer_d },
-  ];
+  ].filter(answer => answer.text && answer.text.trim() !== ''); // Filter out empty answers
 
   const userName = sessionStorage.getItem("userName") || "Guest";
 
@@ -297,6 +314,29 @@ const Game = () => {
                   </label>
                 );
               })}
+            </div>
+          )}
+
+          {/* Source */}
+          {currentQuestion.source && (
+            <div className="mb-6">
+              <p 
+                className="text-black"
+                style={{ 
+                  fontFamily: 'Mark OT', 
+                  fontSize: '12px', 
+                  fontWeight: '400' 
+                }}
+              >
+                Source: <a 
+                  href={currentQuestion.source} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 underline"
+                >
+                  {currentQuestion.source}
+                </a>
+              </p>
             </div>
           )}
 

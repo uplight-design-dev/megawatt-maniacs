@@ -33,13 +33,53 @@ const Index = () => {
     try {
       const { data, error } = await supabase
         .from("leaderboard")
-        .select("id, score, created_at, users(name)")
+        .select(`
+          id, 
+          score, 
+          created_at, 
+          users!inner(name)
+        `)
         .order("score", { ascending: false })
-        .order("created_at", { ascending: true })
-        .limit(10);
+        .order("created_at", { ascending: true });
 
       if (error) throw error;
-      setLeaderboard(data || []);
+      
+      // Sum up all scores per user to get cumulative total
+      const userScores = new Map();
+      data?.forEach(entry => {
+        const userName = entry.users.name;
+        const score = Number(entry.score) || 0; // Ensure score is a number
+        
+        if (!userScores.has(userName)) {
+          userScores.set(userName, {
+            ...entry,
+            totalScore: score,
+            earliestGame: entry.created_at
+          });
+        } else {
+          const existing = userScores.get(userName);
+          userScores.set(userName, {
+            ...existing,
+            totalScore: (existing.totalScore || 0) + score,
+            // Keep the earliest game date for tie-breaking
+            earliestGame: entry.created_at < existing.earliestGame ? entry.created_at : existing.earliestGame
+          });
+        }
+      });
+      
+      const deduplicatedData = Array.from(userScores.values())
+        .sort((a, b) => {
+          // Sort by total score first, then by earliest game date for tie-breaking
+          const aScore = Number(a.totalScore) || 0;
+          const bScore = Number(b.totalScore) || 0;
+          if (bScore !== aScore) {
+            return bScore - aScore;
+          }
+          return new Date(a.earliestGame).getTime() - new Date(b.earliestGame).getTime();
+        })
+        .slice(0, 10);
+      
+      setLeaderboard(deduplicatedData);
     } catch (error) {
       console.error("Error loading leaderboard:", error);
     } finally {
@@ -349,7 +389,7 @@ const Index = () => {
                       </div>
                       <div className="flex justify-between text-sm">
                         <span style={{ fontFamily: 'Mark OT', fontWeight: 500, color: '#000000' }}>
-                          Points: {entry.score.toLocaleString()}
+                          Points: {entry.totalScore.toLocaleString()}
                         </span>
                         <span style={{ fontFamily: 'Mark OT', fontWeight: 500, color: '#000000' }}>
                           Games: {gamesPlayed}
@@ -390,7 +430,7 @@ const Index = () => {
                         className="text-center"
                         style={{ fontFamily: 'Mark OT', fontWeight: 500, fontSize: '18px', color: '#000000' }}
                       >
-                        {entry.score.toLocaleString()}
+                        {entry.totalScore.toLocaleString()}
                       </div>
 
                       {/* Games Played */}

@@ -15,18 +15,21 @@ export interface Database {
           title: string
           description: string | null
           created_at: string
+          is_active: boolean
         }
         Insert: {
           id?: string
           title: string
           description?: string | null
           created_at?: string
+          is_active?: boolean
         }
         Update: {
           id?: string
           title?: string
           description?: string | null
           created_at?: string
+          is_active?: boolean
         }
         Relationships: []
       }

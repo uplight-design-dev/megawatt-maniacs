@@ -49,16 +49,16 @@ const Game = () => {
 
   const loadGame = async () => {
     try {
-      // Get the first available game
+      // Get the active game
       const { data: games, error: gamesError } = await supabase
         .from("games")
         .select("*")
-        .limit(1)
+        .eq("is_active", true)
         .single();
 
       if (gamesError) throw gamesError;
       if (!games) {
-        toast.error("No games available");
+        toast.error("No active game available");
         navigate("/");
         return;
       }

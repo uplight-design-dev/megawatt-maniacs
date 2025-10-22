@@ -414,24 +414,36 @@ const Admin = () => {
 
   const handleSetActiveGame = async (gameId: string) => {
     try {
-      // First, set all games to inactive
-      await supabase
-        .from("games")
-        .update({ is_active: false } as any);
+      console.log("Starting to set active game:", gameId);
       
-      // Then set the selected game as active
+      // Use a transaction-like approach: first deactivate all, then activate the selected one
+      const { error: deactivateError } = await supabase
+        .from("games")
+        .update({ is_active: false })
+        .neq("id", gameId); // Deactivate all games except the one we want to activate
+      
+      if (deactivateError) {
+        console.error("Error deactivating games:", deactivateError);
+        throw deactivateError;
+      }
+      
+      // Then activate the selected game
       const { error } = await supabase
         .from("games")
-        .update({ is_active: true } as any)
+        .update({ is_active: true })
         .eq("id", gameId);
       
-      if (error) throw error;
+      if (error) {
+        console.error("Error activating game:", error);
+        throw error;
+      }
       
+      console.log("Successfully activated game:", gameId);
       setActiveGameId(gameId);
       toast.success("Active game updated successfully");
     } catch (error) {
       console.error("Error setting active game:", error);
-      toast.error("Failed to update active game. The database migration may need to be run first.");
+      toast.error(`Failed to update active game: ${error.message}`);
     }
   };
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -123,16 +123,15 @@ const Index = () => {
     <div className="min-h-screen">
       {/* Top hero section with background */}
       <div
-        className="w-full"
+        className="w-full min-h-[60vh] md:min-h-[570px]"
         style={{
-          height: "570px",
           backgroundImage: "url('/upper-header-background-hero@2x.jpg')",
           backgroundSize: "cover",
           backgroundRepeat: "no-repeat",
           backgroundPosition: "center",
         }}
       >
-        <div className="w-full h-full" style={{ maxWidth: "900px", margin: "0 auto", padding: "40px 0" }}>
+        <div className="w-full h-full max-w-[1000px] w-full mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-10">
           {/* Main Hero Section */}
           <div className="grid lg:grid-cols-2 gap-12 items-center h-full">
           {/* Left Side - Hero Mascot Logo */}
@@ -141,7 +140,7 @@ const Index = () => {
           </div>
 
           {/* Right Side - Signup/Login Card */}
-          <Card className="bg-white animate-fade-in max-w-[415px] w-full mx-auto lg:mx-0" style={{ animationDelay: "0.2s", padding: "40px" }}>
+          <Card className="bg-white animate-fade-in max-w-[650px] w-full mx-auto lg:mx-0" style={{ animationDelay: "0.2s", padding: "40px" }}>
             <h2 className="text-3xl font-bold mb-2 text-uplight-black">
               {isLogin ? "Welcome Back!" : "Sign-Up to play as a"}<br />
               {!isLogin && "Megawatt Maniac!"}
@@ -165,7 +164,7 @@ const Index = () => {
                   placeholder="Name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors"
+                  className="h-12 sm:h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors"
                   style={{ 
                     backgroundColor: "#FCFCFF",
                     borderColor: "#CCD6FF",
@@ -173,8 +172,7 @@ const Index = () => {
                     borderWidth: "1px",
                     borderRadius: "0px",
                     fontSize: "18px",
-                    fontWeight: 400,
-                    "--focus-border-color": "#0047FF"
+                    fontWeight: 400
                   }}
                   onFocus={(e) => {
                     e.target.style.borderColor = "#0047FF";
@@ -190,7 +188,7 @@ const Index = () => {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors"
+                className="h-12 sm:h-[59px] text-lg font-normal border focus-visible:ring-0 focus-visible:ring-offset-0 transition-colors"
                 style={{ 
                   backgroundColor: "#FCFCFF",
                   borderColor: "#CCD6FF",
@@ -215,13 +213,11 @@ const Index = () => {
                     type="submit"
                     size="lg"
                     disabled={loading}
-                    className="rounded-[99px] text-white text-lg font-medium transition-all hover:opacity-90"
+                    className="rounded-[99px] text-white text-lg font-medium transition-all hover:opacity-90 w-full sm:w-auto md:w-[197px] h-12 md:h-[51px]"
                     style={{
                       backgroundColor: "#0047FF",
                       boxShadow: "0px 6px 24px 0px rgba(0,71,255,0.47)",
-                      border: "1px solid rgba(0,0,0,0.2)",
-                      width: "197px",
-                      height: "51px"
+                      border: "1px solid rgba(0,0,0,0.2)"
                     }}
                   >
                     {isLogin ? "Login" : "Start Playing!"}
@@ -275,11 +271,8 @@ const Index = () => {
       >
         {/* Leaderboard Island */}
         <div 
-          className="bg-white mx-auto animate-fade-in" 
+          className="bg-white mx-auto animate-fade-in max-w-[900px] w-full px-4 sm:px-6 md:px-[70px] py-8 md:py-[50px] md:pb-[70px] rounded-3xl" 
           style={{ 
-            maxWidth: "900px",
-            padding: "50px 70px 70px 70px",
-            borderRadius: "24px",
             animationDelay: "0.4s"
           }}
         >
@@ -298,11 +291,16 @@ const Index = () => {
           ) : (
             <div>
               {/* Column headers */}
+              {/* Mobile: Stack layout */}
+              <div className="block md:hidden pb-4">
+                <div className="text-center text-sm text-gray-500 mb-2">Leaderboard</div>
+              </div>
+              
+              {/* Desktop: Grid layout */}
               <div
-                className="items-center pb-6"
+                className="hidden md:grid items-center pb-6"
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 140px 140px',
+                  gridTemplateColumns: '1fr minmax(100px,140px) minmax(100px,140px)',
                   color: '#88889C',
                   fontFamily: 'Mark OT',
                   fontWeight: 500,
@@ -328,21 +326,51 @@ const Index = () => {
                   const gamesPlayed = 4; // placeholder to match mockup layout
 
                   return (
-                    <div
-                      key={entry.id}
-                      className="items-center py-4 border-b last:border-b-0"
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: '1fr 140px 140px',
-                        borderColor: '#E6E9F3',
-                      }}
-                    >
+                    <React.Fragment key={entry.id}>
+                      {/* Mobile: Stack layout */}
+                      <div className="block md:hidden py-4 border-b last:border-b-0" style={{ borderColor: '#E6E9F3' }}>
+                      <div className="flex items-center gap-3 mb-2">
+                        {badgeSrc ? (
+                          <img src={badgeSrc} alt={`Rank ${index + 1}`} className="w-8 h-8 sm:w-[45px] sm:h-[45px]" />
+                        ) : (
+                          <div className="w-8 h-8 sm:w-[45px] sm:h-[45px]"></div>
+                        )}
+                        <div
+                          className="truncate flex-1"
+                          style={{
+                            fontFamily: 'Mark OT',
+                            fontWeight: isTopThree ? 700 : 400,
+                            fontSize: isTopThree ? '18px' : '16px',
+                            color: '#000000',
+                          }}
+                        >
+                          {`${index + 1}. ${entry.users.name}`}
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span style={{ fontFamily: 'Mark OT', fontWeight: 500, color: '#000000' }}>
+                          Points: {entry.score.toLocaleString()}
+                        </span>
+                        <span style={{ fontFamily: 'Mark OT', fontWeight: 500, color: '#000000' }}>
+                          Games: {gamesPlayed}
+                        </span>
+                      </div>
+                    </div>
+
+                      {/* Desktop: Grid layout */}
+                      <div
+                        className="hidden md:grid items-center py-4 border-b last:border-b-0"
+                        style={{
+                          gridTemplateColumns: '1fr minmax(100px,140px) minmax(100px,140px)',
+                          borderColor: '#E6E9F3',
+                        }}
+                      >
                       {/* Name + Rank */}
                       <div className="flex items-center gap-4 min-w-0">
                         {badgeSrc ? (
-                          <img src={badgeSrc} alt={`Rank ${index + 1}`} style={{ width: '45px', height: '45px' }} />
+                          <img src={badgeSrc} alt={`Rank ${index + 1}`} className="w-[45px] h-[45px]" />
                         ) : (
-                          <div style={{ width: '45px', height: '45px' }}></div>
+                          <div className="w-[45px] h-[45px]"></div>
                         )}
                         <div
                           className="truncate"
@@ -373,6 +401,7 @@ const Index = () => {
                         {gamesPlayed}
                       </div>
                     </div>
+                    </React.Fragment>
                   );
                 })}
               </div>
@@ -387,7 +416,7 @@ const Index = () => {
           <img 
             src="/uplight-footer@2x.png" 
             alt="Uplight Footer" 
-            className="max-w-[425px] w-full h-auto"
+            className="max-w-[425px] w-full h-auto px-4 sm:px-0"
           />
           {/* Admin link - positioned at right side */}
           <div className="absolute" style={{ right: '25px' }}>

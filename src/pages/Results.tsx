@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -120,7 +120,7 @@ const Results = () => {
         backgroundPosition: 'center'
       }}
     >
-      <div className="mx-auto" style={{ maxWidth: "900px" }}>
+      <div className="mx-auto max-w-[900px] w-full px-4 sm:px-6 md:px-8">
         {/* Results Header */}
         {finalScore && (
           <div className="text-center mb-12 animate-fade-in">
@@ -151,11 +151,7 @@ const Results = () => {
 
         {/* Leaderboard - styled to match Index page */}
         <div 
-          className="bg-white mb-8"
-          style={{ 
-            padding: "50px 70px 70px 70px",
-            borderRadius: "24px"
-          }}
+          className="bg-white mb-8 px-4 sm:px-6 md:px-[70px] py-8 md:py-[50px] md:pb-[70px] rounded-3xl"
         >
           <h2 className="mb-8 text-uplight-black font-normal" style={{ fontFamily: 'Mark OT', fontWeight: 400, fontSize: '42px' }}>
             Leaderboard
@@ -172,11 +168,16 @@ const Results = () => {
           ) : (
             <div>
               {/* Column headers */}
+              {/* Mobile: Stack layout */}
+              <div className="block md:hidden pb-4">
+                <div className="text-center text-sm text-gray-500 mb-2">Leaderboard</div>
+              </div>
+              
+              {/* Desktop: Grid layout */}
               <div
-                className="items-center pb-6"
+                className="hidden md:grid items-center pb-6"
                 style={{
-                  display: 'grid',
-                  gridTemplateColumns: '1fr 140px 140px',
+                  gridTemplateColumns: '1fr minmax(100px,140px) minmax(100px,140px)',
                   color: '#88889C',
                   fontFamily: 'Mark OT',
                   fontWeight: 500,
@@ -202,21 +203,51 @@ const Results = () => {
                   const gamesPlayed = 4; // placeholder to match mockup layout
 
                   return (
-                    <div
-                      key={entry.id}
-                      className="items-center py-4 border-b last:border-b-0"
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: '1fr 140px 140px',
-                        borderColor: '#E6E9F3',
-                      }}
-                    >
+                    <React.Fragment key={entry.id}>
+                      {/* Mobile: Stack layout */}
+                      <div className="block md:hidden py-4 border-b last:border-b-0" style={{ borderColor: '#E6E9F3' }}>
+                      <div className="flex items-center gap-3 mb-2">
+                        {badgeSrc ? (
+                          <img src={badgeSrc} alt={`Rank ${index + 1}`} className="w-8 h-8 sm:w-[45px] sm:h-[45px]" />
+                        ) : (
+                          <div className="w-8 h-8 sm:w-[45px] sm:h-[45px]"></div>
+                        )}
+                        <div
+                          className="truncate flex-1"
+                          style={{
+                            fontFamily: 'Mark OT',
+                            fontWeight: isTopThree ? 700 : 400,
+                            fontSize: isTopThree ? '18px' : '16px',
+                            color: '#000000',
+                          }}
+                        >
+                          {`${index + 1}. ${entry.users.name}`}
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span style={{ fontFamily: 'Mark OT', fontWeight: 500, color: '#000000' }}>
+                          Points: {entry.score.toLocaleString()}
+                        </span>
+                        <span style={{ fontFamily: 'Mark OT', fontWeight: 500, color: '#000000' }}>
+                          Games: {gamesPlayed}
+                        </span>
+                      </div>
+                    </div>
+
+                      {/* Desktop: Grid layout */}
+                      <div
+                        className="hidden md:grid items-center py-4 border-b last:border-b-0"
+                        style={{
+                          gridTemplateColumns: '1fr minmax(100px,140px) minmax(100px,140px)',
+                          borderColor: '#E6E9F3',
+                        }}
+                      >
                       {/* Name + Rank */}
                       <div className="flex items-center gap-4 min-w-0">
                         {badgeSrc ? (
-                          <img src={badgeSrc} alt={`Rank ${index + 1}`} style={{ width: '45px', height: '45px' }} />
+                          <img src={badgeSrc} alt={`Rank ${index + 1}`} className="w-[45px] h-[45px]" />
                         ) : (
-                          <div style={{ width: '45px', height: '45px' }}></div>
+                          <div className="w-[45px] h-[45px]"></div>
                         )}
                         <div
                           className="truncate"
@@ -247,6 +278,7 @@ const Results = () => {
                         {gamesPlayed}
                       </div>
                     </div>
+                    </React.Fragment>
                   );
                 })}
               </div>
@@ -259,7 +291,7 @@ const Results = () => {
           <Button
             size="lg"
             onClick={() => navigate("/")}
-            className="min-w-[180px]"
+            className="w-full sm:min-w-[180px]"
             style={{
               backgroundColor: '#00E297',
               color: '#0047FF',

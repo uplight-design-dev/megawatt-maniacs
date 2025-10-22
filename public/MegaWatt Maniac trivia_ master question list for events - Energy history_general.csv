@@ -1,0 +1,211 @@
+Category,Question,Answer options,Correct Answer,Source (Include a url)
+Energy history/General,What was the 1935 Federal law that paved the way for state-level utility regulation? ,"A) The Federal Power Act
+B) The Public Utility Holding Company Act (PUHCA)
+C) The Rural Electrification Act",Public Utility Holding Company Act,UCC-MegaWattsManiacs-Trivia
+Energy history/General,What is the official US standard voltage for residential wall outlets? ,"A) 110 volts
+B) 120 volts
+C) 240 volts",120 V,UCC-MegaWattsManiacs-Trivia
+Energy history/General,"Today we take access to electricity for granted in the US. But in the early part of the 20th century before the grid was built out, utilities actually had to market the idea of electricity to promote demand. To help they relied on one of the best animated characters of the century. 
+
+Who is this? 
+
+
+
+
+","A) Reddy Kilowatt
+B) Mr. Electric
+C) Captain Watt",Reddy Kilowatt,UCC-MegaWattsManiacs-Trivia
+Energy history/General,"What is law describing the relationship between voltage, current, and resistance? ","A) Faraday's Law
+B) Ohm's Law
+C) Kirchhoff's Law",Ohm’s Law,UCC-MegaWattsManiacs-Trivia
+Energy history/General,"What is the unit used to rate the capacity of transformers, and what are the two forms of power that that unit effectively measures?","A) Watts - measuring real power and reactive power
+B) Volt-Amperes (VA) - measuring apparent power (combination of real and reactive power)
+C) Kilowatt-hours - measuring energy consumption over time","kVA, for both real & reactive power",UCC-MegaWattsManiacs-Trivia
+Current events,"Which state recently enacted the Community Energy Act, mandating a VPP? ","A) California
+B) New York
+C) Colorado",Virginia,UCC-MegaWattsManiacs-Trivia
+Energy history/General,"What year did Thomas Edison open the first commercial electric power plant, Pearl Street Station, in New York City?","A) 1879
+B) 1882
+C) 1892",B) 1882,https://www.energy.gov/timeline/timeline-history-energy
+Current events,"After decades of stagnation, US power demand growth has returned to levels not seen since which decade?","A) The 1980s
+B) The 1990s
+C) The 2000s",B) The 1990s,Halycon Climate Week slides 2025
+Current events,"In the ERCOT large load interconnection queue as of September 2025, what percentage of requests were for data centers?","A) 56%
+B) 69%
+C) 75%",B) 69%,Halycon Climate Week slides 2025
+Current events,"As of July 2025, by what percentage has the average household price of electricity in the United States risen this year?","A) 7.8 percent
+B) 9.5 percent
+C) 12.0 percent",B) 9.5 percent,https://insideclimatenews.org/news/25092025/inside-clean-energy-electricity-rate-hikes-by-state/
+Current events,Which state had the largest percentage increase in electricity rates this year?,"A) California
+B) New Jersey
+C) Missouri",C) Missouri,https://insideclimatenews.org/news/25092025/inside-clean-energy-electricity-rate-hikes-by-state/
+Current events,Which of the following states was NOT in the top five for electricity rate increases in 2025?,"A) California
+B) North Dakota
+C) Montana",A) California,https://insideclimatenews.org/news/25092025/inside-clean-energy-electricity-rate-hikes-by-state/
+Current events,"For how many consecutive hours did solar provide more than 40% of Texas's electricity on September 9, 2025?","A) Three hours
+B) Five hours
+C) Seven hours",C) Seven hours,https://ieefa.org/resources/summer-solar-and-battery-storage-records-texas?utm_campaign=7757569-Energy%20Transition%202025&utm_medium=email&_hsenc=p2ANqtz--3UuVDOEGi78NEIBiiEuhstltY0CcY-FEJp3IkXyCQIk3J-z1gbhiPy7J23ITXhlQbqNHRl6ImOgzTwpXYQ4xQoMAwq1QkFMRMVFCQKav6meHbpjQ&_hsmi=381203897&utm_content=380898534&utm_source=hs_email
+Energy history/General,What is the standard frequency of alternating current (AC) electricity in the United States grid?,"A) 50 hertz
+B) 60 hertz
+C) 120 hertz",B) 60 hertz,https://www.eia.gov/energyexplained/electricity/
+Energy history/General,"As of 2024, what is the largest single source of electricity generation in the United States?","A) Natural gas
+B) Coal
+C) Nuclear",A) Natural gas,https://www.eia.gov/electricity/monthly/
+Energy history/General,"The ""War of the Currents"" in the late 1880s was a battle between Edison's direct current (DC) and which system ultimately adopted for power transmission?","A) Tesla's alternating current (AC)
+B) Westinghouse's battery storage
+C) Edison's improved DC system",A) Tesla's alternating current (AC),https://www.smithsonianmag.com/history/
+Energy history/General,Approximately what percentage of electricity is lost during transmission and distribution across U.S. power lines?,"A) 2%
+B) 5%
+C) 15%",B) 5%,https://www.eia.gov/tools/faqs/faq.php?id=105&t=3
+Energy history/General,"In most U.S. electricity markets, when does peak electricity demand typically occur during summer months?","A) 6-9 AM
+B) 12-3 PM
+C) 4-7 PM",C) 4-7 PM,https://www.eia.gov/todayinenergy/
+Energy history/General,"What does ""capacity factor"" measure in electricity generation?","A) The maximum output a power plant can produce
+B) The ratio of actual output to potential maximum output over time
+C) The efficiency rating of a power plant", B) The ratio of actual output to potential maximum output over time,https://www.eia.gov/tools/glossary/
+Current events,The 2025 WoodMacKenzie VPP identifies friction in which area as the greatest technical impediment to residential and small commercial participation in wholesale markets?,"A) Customer-centric control by OEMs
+B) DER adoption rates
+C) Data access for enrollment and settlement",C) Data access for enrollment and settlement,2025 WoodMacKenzie North America Virtual Power Plant Market Report
+Current events,"In which two regions, which also have the greatest utility capacity commitments to data centers, is the greatest disclosed VPP offtake capacity found?","A) PJM and ERCOT
+B) MISO and SPP
+C) CAISO and NYISO",A) PJM and ERCOT,2025 WoodMacKenzie North America Virtual Power Plant Market Report
+Current events,"According to WoodMacKenzie, by what percentage could large loads, including AI data centers, ultimately increase utilities' peak demand?","A) 15%
+B) 8%
+C) 20%",C) 20%,https://www.utilitydive.com/news/utilities-could-add-147-gw-of-new-large-loads-boosting-peak-demand-20-wo/759359/
+Current events,"According to the Electric Power Research Institute, what percentage of U.S. electricity generation could data centers consume by 2030?","A) 5%
+B) 9%
+C) 15%",B) 9%,https://www.utilitydive.com/news/utilities-could-add-147-gw-of-new-large-loads-boosting-peak-demand-20-wo/759359/
+Current events,What percentage of the new generation added in the first five months of 2025 came from renewable sources?,"A) 32%
+B) 84%
+C) 91%",C) 91%,https://www.utilitydive.com/news/renewables-make-up-91-of-the-15-gw-of-generation-the-us-added-in-first-5-m/758603/
+Current events,"Including hydropower, biomass, and geothermal, what percentage of total U.S. utility-scale generating capacity do renewables currently claim?","A) 20%
+B) 32%
+C) 43%", B) 32%,https://www.utilitydive.com/news/renewables-make-up-91-of-the-15-gw-of-generation-the-us-added-in-first-5-m/758603/
+Current events,How many miles of new transmission lines reached completion during the January-May 2025 period?,"A) 244 miles
+B) 345 miles
+C) 435 miles",A) 244 miles,https://www.utilitydive.com/news/renewables-make-up-91-of-the-15-gw-of-generation-the-us-added-in-first-5-m/758603/
+Energy history/General,In what year was the Energy Star program launched by the U.S. Environmental Protection Agency?,"A) 1988
+B) 1992
+C) 1998",B) 1992,https://www.energystar.gov/about
+Energy history/General,The Public Utility Holding Company Act (PUHCA) of 1935 was enacted to regulate electric utilities following which major economic event?,"A) World War I
+B) The Great Depression
+C) The Oil Crisis",B) The Great Depression,https://www.sec.gov/fast-answers/answerspuhcahtm.html
+Energy history/General,"Which city was home to the first investor-owned electric utility in the United States, established in 1878?","
+A) San Francisco
+B) New York City
+C) Boston",A) San Francisco,https://edisontechcenter.org/electricpower.html
+Energy history/General,The Energy Policy Act of 1992 fundamentally changed the U.S. electric utility industry by promoting what concept?,"A) Nuclear power expansion
+B) Wholesale competition and deregulation
+C) Federal ownership of utilities",B) Wholesale competition and deregulation,https://www.energy.gov/sites/default/files/2016/08/f33/epact_1992.pdf
+Pop culture ,"In the ""Back to the Future"" film series, what unconventional power source does Doc Brown use to generate the 1.21 gigawatts needed for time travel in the climactic scene of the first movie?","A) A nuclear reactor
+B) A hydroelectric dam
+C) Lightning striking the clock tower",C) Lightning striking the clock tower,https://www.imdb.com/title/tt0088763/
+Pop culture ,"What is the name of the nuclear power plant where Homer Simpson works in the long-running animated series ""The Simpsons""?","A) Springfield Nuclear Power Plant
+B) Shelbyville Atomic Energy
+C) Capital City Power & Light",A) Springfield Nuclear Power Plant,https://www.imdb.com/title/tt0096697/
+Pop culture ,"In the Marvel Cinematic Universe, what element does Tony Stark synthesize to create a new, safer arc reactor for his Iron Man suit?","A) Vibranium
+B) A new element (theoretically based on the Tesseract)
+C) Palladium",B) A new element (theoretically based on the Tesseract),https://www.imdb.com/title/tt1228705/
+Pop culture ,"In ""The Matrix"" trilogy, how do the machines harvest energy from humans?","A) By using humans as nuclear fuel
+B) By converting human bioelectricity and body heat into energy
+C) By forcing humans to run on treadmills",B) By converting human bioelectricity and body heat into energy,https://www.imdb.com/title/tt0133093/
+Pop culture ,"In the ""Star Trek"" universe, what powers the warp drive that enables faster-than-light travel?","A) Dilithium crystals regulating matter-antimatter reactions
+B) Solar energy collectors
+C) Fusion reactors",A) Dilithium crystals regulating matter-antimatter reactions,https://www.startrek.com/article/tech-101-warp-drive
+Current events,"According to the DOE's 2025 VPP Liftoff Update, how many gigawatts of VPP capacity should be deployed by 2030 to serve 10-20% of peak load?","A) 40-80 GW
+B) 80-160 GW
+C) 100-200 GW",B) 80-160 GW,"U.S. Department of Energy, Pathways to Commercial Liftoff: Virtual Power Plants 2025 Update"
+Current events,"According to NERC forecasts, U.S. peak summer demand is expected to grow from approximately 803 GW in 2024 to what amount by 2030?","A) 897 GW
+B) 950 GW
+C) 850 GW",A) 897 GW,"NERC 2024 Electricity Supply & Demand forecasts, cited in DOE VPP Liftoff Update report"
+Current events,VPP peaking capacity can be approximately what percentage cheaper than a conventional natural gas peaker plant?,"A) 60% cheaper
+B) 20% cheaper
+C) 40% cheaper",C) 40% cheaper,"DOE 2025 VPP Update, citing Brattle Group analysis"
+Energy history/General,During which time period do most utilities charge the highest rates under time-of-use pricing?,"A) Midnight to 6 AM
+B) Late afternoon to early evening (typically 4-9 PM)
+C) Mid-morning (9 AM to noon)",B) Late afternoon to early evening (typically 4-9 PM),https://www.energy.gov/eere/slsc/time-based-rate-programs
+Energy history/General,How does real-time pricing (RTP) differ from standard time-of-use rates?,"A) RTP rates are set annually and never change
+B) RTP only applies to commercial customers
+C) RTP rates can change hourly or even more frequently based on wholesale market prices",C) RTP rates can change hourly or even more frequently based on wholesale market prices,https://www.ferc.gov/industries-data/electric/power-sales-and-markets/demand-response
+Energy history/General,What distinguishes critical peak pricing (CPP) from standard time-of-use rates?,"A) CPP adds extremely high rates during a limited number of emergency events per year (typically 10-15 days)
+B) CPP eliminates all off-peak discounts
+C) CPP only applies to electric vehicle charging",A) CPP adds extremely high rates during a limited number of emergency events per year (typically 10-15 days),https://smartenergycc.org/critical-peak-pricing/
+Current events,"In what year did California's major investor-owned utilities (PG&E, SCE, SDG&E) transition residential customers to default time-of-use rates unless they opted out?","A) 2015
+B) 2019-2021 (phased rollout)
+C) 2023",B) 2019-2021 (phased rollout),https://www.cpuc.ca.gov/industries-and-topics/electrical-energy/electric-costs/residential-rates/time-of-use
+Energy history/General,"From 1960 to 1970, total U.S. electricity sales nearly doubled. About how many years did it take for electricity demand to double again after 1970? ","A) 17 years
+B) 25 years
+C) 30 years",C) 30 years,PMM Pulse September 2025
+Current events,Approximately what percentage of ERCOT’s generation came from wind and solar in 2025? ,"A) 32%
+B) 50%
+C) 67%",B) 50%,PMM Pulse September 2025
+Pop culture ,"In the Pixar film Monsters, Inc., the city of Monstropolis faces an energy crisis. What is their original energy source, and what do they eventually discover is more powerful?","A) Children's screams originally; children's laughter is discovered to be more powerful
+B) Children's laughter originally; children's screams are discovered to be more powerful
+C) Children's tears originally; children's singing is discovered to be more powerful",A) Children's screams originally; children's laughter is discovered to be more powerful,https://www.imdb.com/title/tt0198781/
+Current events,What is the approximate cost per megawatt for a full data center stack deployment including GPUs?,"A) $15 million per MW
+B) $10 million per MW
+C) $25 million per MW",C) $25 million per MW,https://www.latitudemedia.com/news/catalyst-explaining-the-watt-bit-spread/
+Current events,"When PJM assesses 100 megawatts of demand response capacity, approximately how many megawatts does it count toward reserve contribution?","A) About 90 megawatts
+B) About 60 megawatts
+C) About 30 megawatts",B) About 60 megawatts,https://www.latitudemedia.com/news/catalyst-pjm-capacity-crunch/
+Energy history/General,What is the fundamental difference between power (measured in watts) and energy (measured in watt-hours)?,"A) Power is the rate of energy use at a moment in time; energy is power used over time
+B) Power and energy are the same thing, just different units
+C) Power is only for electricity; energy includes all fuel types",A) Power is the rate of energy use at a moment in time; energy is power used over time,https://www.eia.gov/energyexplained/units-and-calculators/
+Energy history/General,"
+According to Ohm's Law, how are voltage (volts), current (amps), and power (watts) related?","A) Watts = Volts × Amps
+B) Watts = Volts ÷ Amps
+C) Watts = Volts + Amps",A) Watts = Volts × Amps,https://www.energy.gov/energysaver/energy-basics
+Energy history/General,Which of the following uses approximately 1 watt-hour of energy?,"A) Running a typical LED light bulb for one hour
+B) Charging a smartphone for about 15-20 minutes
+C) Running a laptop computer for one hour",B) Charging a smartphone for about 15-20 minutes,https://www.energy.gov/energysaver/energy-saver-guide
+Energy history/General,Which of the following represents approximately 1 megawatt-hour (MWh) of energy consumption?,"A) The monthly electricity use of a typical U.S. household
+B) Powering about 30-40 average U.S. homes for one hour
+C) Running a smartphone for one year",B) Powering about 30-40 average U.S. homes for one hour,https://www.eia.gov/tools/faqs/faq.php?id=97&t=3
+Energy history/General,Which of the following represents approximately 1 gigawatt-hour (GWh) of energy?,"A) Annual electricity consumption of about 90,000 average U.S. homes
+B) Powering a large data center for about one month
+C) The electricity needed to charge one electric vehicle","A) Annual electricity consumption of about 90,000 average U.S. homes",https://www.eia.gov/electricity/monthly/
+Energy history/General,What was the first customer to receive electricity from Thomas Edison's Pearl Street Station in New York City in 1882?,"A) The New York Times building
+B) The White House
+C) Grand Central Terminal",A) The New York Times building,https://americanhistory.si.edu/lighting/19thcent/
+Energy history/General,Where was the first hydroelectric power plant in the United States built in 1882?,"A) Niagara Falls, New York
+B) Appleton, Wisconsin
+C) Hoover Dam, Nevada","B) Appleton, Wisconsin",https://www.energy.gov/eere/water/history-hydropower
+Energy history/General,"In what year was the Tennessee Valley Authority (TVA), one of the largest public power providers in the U.S., created as part of the New Deal?","A) 1929
+B) 1933
+C) 1941",B) 1933,https://www.tva.com/about-tva/our-history
+Energy history/General,"Samuel Insull, known as the architect of the modern electric utility industry, built his utility empire primarily in which U.S. city before his companies collapsed during the Great Depression?","A) Los Angelos
+B) New York
+C) Chicago",C) Chicago,https://www.smithsonianmag.com/history/
+Energy history/General,"Pacific Gas and Electric Company (PG&E), one of the largest utilities in the United States, was formed in what year?","A) 1852
+B) 1905
+C) 1920",B) 1905,https://www.pge.com/en_US/about-pge/company-information/company-history/company-history.page
+Energy history/General,"What was the first commercial nuclear power plant in the United States, which began operation in 1957?","A) Three Mile Island, Pennsylvania
+B) Diablo Canyon, California 
+C) Shippingport Atomic Power Station, Pennsylvania","C) Shippingport Atomic Power Station, Pennsylvania",https://www.nrc.gov/about-nrc/history.html
+Energy history/General,"The massive Northeast Blackout of November 9, 1965, which affected over 30 million people across multiple states and Canada, was triggered by what event?","A) A hurricane destroying major transmission lines
+B) A relay malfunction at a power station near Niagara Falls
+C) A cyber attack on grid control systems",B) A relay malfunction at a power station near Niagara Falls,https://www.energy.gov/articles/northeast-blackout-1965
+Energy history/General,Where was the first modern utility-scale wind turbine installed in the United States in 1941?,"A) Palm Springs, California
+B) Grandpa's Knob, Vermont
+C) Altamont Pass, California","B) Grandpa's Knob, Vermont",https://www.energy.gov/eere/wind/history-wind-energy
+Energy history/General,"Bell Labs created the first practical silicon solar cell in what year, marking the beginning of modern solar power technology?","A) 1937
+B) 1946
+C) 1954",C) 1954,https://www.energy.gov/eere/solar/articles/history-solar-energy
+Energy history/General,The oil crisis of what year significantly accelerated U.S. government investment in renewable energy research and development?,"A) 1965
+B) 1973
+C) 1985", B) 1973,https://www.eia.gov/todayinenergy/detail.php?id=40212
+Energy history/General,"What was the name of the first commercial offshore wind farm in the United States, which began operation in 2016?","A)  Block Island Wind Farm 
+B) Vineyard Wind
+C) Cape Wind",A) Block Island Wind Farm,https://www.energy.gov/eere/articles/united-states-first-offshore-wind-farm-now-spinning
+Energy history/General,In which state did the first geothermal power plant in the United States begin operation in 1960?,"A) Nevada
+B) California
+C) Hawaii",B) California,https://www.energy.gov/eere/geothermal/history-geothermal-energy-america
+Energy history/General,LED light bulbs use approximately what percentage less energy than traditional incandescent bulbs to produce the same amount of light?,"A) 40-50% less
+B) 75-80% less
+C) 20-30% less",B) 75-80% less,https://www.energy.gov/energysaver/lighting-choices-save-you-money
+Energy history/General,Approximately what percentage of total U.S. energy consumption is attributed to buildings (residential and commercial combined)?,"A) 40%
+B) 51%
+C) 60%",A) 40%,https://www.eia.gov/energyexplained/use-of-energy/
+Energy history/General,Modern heat pumps can be how many times more efficient at heating than traditional electric resistance heating?,"A) 1.5 times more efficient
+B) 3-4 times more efficient
+C) 10 times more efficient",B) 3-4 times more efficient,https://www.energy.gov/energysaver/heat-pump-systems

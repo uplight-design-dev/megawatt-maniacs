@@ -200,39 +200,24 @@ const Game = () => {
   return (
     <div className="min-h-screen pattern-background">
       {/* Header Navbar */}
-      <div style={{ 
-        position: "fixed",
-        top: "0",
-        left: "0",
-        right: "0",
-        zIndex: "50",
-        height: "105px",
-        display: "flex",
-        alignItems: "center",
-        paddingLeft: "50px", 
-        paddingRight: "50px",
-        backgroundColor: "rgba(255, 255, 255, 0.01)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        width: "100vw"
-      }}>
-        <img src="/megawatt-maniac-white-logo.svg" alt="Megawatt Maniacs" className="w-[204px] h-[62px]" />
+      <div className="fixed top-0 left-0 right-0 z-50 h-16 sm:h-[105px] flex items-center px-4 sm:px-8 md:px-12 bg-white/5 backdrop-blur-md w-full">
+        <img src="/megawatt-maniac-white-logo.svg" alt="Megawatt Maniacs" className="h-10 sm:h-[62px] w-auto max-w-[204px]" />
         <div className="flex-1 flex justify-center" style={{ marginLeft: "-102px" }}>
           <div className="flex items-center gap-3">
             <img src="/default-avatar-white.svg" alt="User Avatar" className="w-8 h-8" />
             <span className="text-white font-medium">{userName}</span>
           </div>
         </div>
-        <img src="/back-bento@2x.png" alt="Menu" className="w-[37px] h-[35px]" />
+        <img src="/back-bento@2x.png" alt="Menu" className="w-8 h-8 sm:w-[37px] sm:h-[35px]" />
       </div>
 
       {/* Spacer to ensure proper background coverage */}
-      <div className="h-[20px]"></div>
+      <div className="h-4 sm:h-[20px]"></div>
 
-      <div className="mx-auto pb-6" style={{ width: "900px", marginTop: "195px" }}>
+      <div className="mx-auto pb-6 max-w-[900px] w-full px-4 sm:px-6 md:px-8 pt-24 sm:pt-[140px]">
 
         {/* Question */}
-        <Card className="mb-6 bg-white rounded-2xl shadow-lg" style={{ paddingLeft: "90px", paddingRight: "90px", paddingTop: "70px", paddingBottom: "70px" }}>
+        <Card className="mb-6 bg-white rounded-2xl shadow-lg px-4 sm:px-6 md:px-[90px] py-6 sm:py-8 md:py-[70px]">
           {/* Question Labels */}
           <div className="flex gap-3 mb-6">
             <span className="px-4 bg-white text-black rounded-full text-xs font-normal border border-black" style={{ fontFamily: 'Mark OT', fontSize: '12px', height: '27px', display: 'flex', alignItems: 'center' }}>
@@ -384,13 +369,11 @@ const Game = () => {
                 }
               }}
               disabled={!selectedAnswer && !textAnswer.trim()}
-              className="rounded-[99px] text-white text-lg font-medium transition-all hover:opacity-90 flex items-center gap-2"
+              className="rounded-[99px] text-white text-lg font-medium transition-all hover:opacity-90 flex items-center gap-2 w-full sm:w-auto md:w-[197px] h-12 md:h-[51px]"
               style={{
                 backgroundColor: "#0047FF",
                 boxShadow: "0px 6px 24px 0px rgba(0,71,255,0.47)",
-                border: "1px solid rgba(0,0,0,0.2)",
-                width: "197px",
-                height: "51px"
+                border: "1px solid rgba(0,0,0,0.2)"
               }}
             >
               {!hasCheckedAnswer
@@ -408,7 +391,7 @@ const Game = () => {
 
       {/* Footer */}
       <div className="text-center" style={{ marginTop: "275px", paddingBottom: "32px" }}>
-        <img src="/uplight-white-green-logo@2x.png" alt="Uplight" className="w-[222px] mx-auto mb-2" />
+        <img src="/uplight-white-green-logo@2x.png" alt="Uplight" className="max-w-[222px] w-full h-auto mx-auto mb-2" />
         <p className="text-white text-sm">Copyright © 2026 Uplight, Inc. All rights reserved.</p>
       </div>
     </div>

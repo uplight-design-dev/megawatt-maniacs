@@ -317,7 +317,7 @@ const Index = () => {
           }}
         >
           <h2 className="mb-8 text-uplight-black font-normal" style={{ fontFamily: 'Mark OT', fontWeight: 400, fontSize: '42px' }}>
-            Leaderboard
+            Top 10 Leaderboard
           </h2>
           
           {leaderboardLoading ? (

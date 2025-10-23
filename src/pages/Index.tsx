@@ -11,6 +11,9 @@ interface LeaderboardEntry {
   id: string;
   score: number;
   created_at: string;
+  totalScore: number;
+  gamesPlayed: number;
+  earliestGame: string;
   users: {
     name: string;
   };
@@ -44,7 +47,7 @@ const Index = () => {
 
       if (error) throw error;
       
-      // Sum up all scores per user to get cumulative total
+      // Sum up all scores per user to get cumulative total and count games played
       const userScores = new Map();
       data?.forEach(entry => {
         const userName = entry.users.name;
@@ -54,6 +57,7 @@ const Index = () => {
           userScores.set(userName, {
             ...entry,
             totalScore: score,
+            gamesPlayed: 1, // First game
             earliestGame: entry.created_at
           });
         } else {
@@ -61,6 +65,7 @@ const Index = () => {
           userScores.set(userName, {
             ...existing,
             totalScore: (existing.totalScore || 0) + score,
+            gamesPlayed: (existing.gamesPlayed || 0) + 1, // Increment game count
             // Keep the earliest game date for tie-breaking
             earliestGame: entry.created_at < existing.earliestGame ? entry.created_at : existing.earliestGame
           });
@@ -317,7 +322,7 @@ const Index = () => {
           }}
         >
           <h2 className="mb-8 text-uplight-black font-normal" style={{ fontFamily: 'Mark OT', fontWeight: 400, fontSize: '42px' }}>
-            Leaderboard
+            Top 10 Leaderboard
           </h2>
           
           {leaderboardLoading ? (
@@ -363,7 +368,7 @@ const Index = () => {
                     : index === 2
                     ? "/third-place-avatar.svg"
                     : undefined;
-                  const gamesPlayed = 4; // placeholder to match mockup layout
+                  const gamesPlayed = entry.gamesPlayed || 0;
 
                   return (
                     <React.Fragment key={entry.id}>

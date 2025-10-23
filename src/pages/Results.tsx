@@ -9,6 +9,9 @@ interface LeaderboardEntry {
   id: string;
   score: number;
   created_at: string;
+  totalScore: number;
+  gamesPlayed: number;
+  earliestGame: string;
   users: {
     name: string;
   };
@@ -54,7 +57,7 @@ const Results = () => {
 
       if (error) throw error;
       
-      // Sum up all scores per user to get cumulative total
+      // Sum up all scores per user to get cumulative total and count games played
       const userScores = new Map();
       data?.forEach(entry => {
         const userName = entry.users.name;
@@ -64,6 +67,7 @@ const Results = () => {
           userScores.set(userName, {
             ...entry,
             totalScore: score,
+            gamesPlayed: 1, // First game
             earliestGame: entry.created_at
           });
         } else {
@@ -71,6 +75,7 @@ const Results = () => {
           userScores.set(userName, {
             ...existing,
             totalScore: (existing.totalScore || 0) + score,
+            gamesPlayed: (existing.gamesPlayed || 0) + 1, // Increment game count
             // Keep the earliest game date for tie-breaking
             earliestGame: entry.created_at < existing.earliestGame ? entry.created_at : existing.earliestGame
           });
@@ -240,7 +245,7 @@ const Results = () => {
                     : index === 2
                     ? "/third-place-avatar.svg"
                     : undefined;
-                  const gamesPlayed = 4; // placeholder to match mockup layout
+                  const gamesPlayed = entry.gamesPlayed || 0;
 
                   return (
                     <React.Fragment key={entry.id}>

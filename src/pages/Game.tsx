@@ -225,7 +225,9 @@ const Game = () => {
             <span className="text-white font-medium">{userName}</span>
           </div>
         </div>
-        <img src="/back-bento@2x.png" alt="Menu" className="w-8 h-8 sm:w-[37px] sm:h-[35px]" />
+        <a href="https://uplight-plma.framer.website/">
+          <img src="/back-bento@2x.png" alt="Menu" className="w-8 h-8 sm:w-[37px] sm:h-[35px]" />
+        </a>
       </div>
 
       {/* Spacer to ensure proper background coverage */}

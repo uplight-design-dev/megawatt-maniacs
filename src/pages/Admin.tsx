@@ -690,6 +690,46 @@ const Admin = () => {
             <div className="space-y-6">
               <h1 className="text-3xl font-bold text-black mb-6">Game Management</h1>
               
+              {/* Games List */}
+              <Card className="p-6 bg-white border border-border rounded-2xl text-black">
+                <h2 className="text-2xl font-bold mb-4">Existing Games</h2>
+                {games.length === 0 ? (
+                  <p className="text-muted-foreground">No games yet</p>
+                ) : (
+                  <div className="space-y-3">
+                    {games.map((game) => (
+                      <div
+                        key={game.id}
+                        className="flex items-center justify-between p-4 border border-border rounded-[24px]"
+                      >
+                        <div>
+                          <h3 className="font-bold text-lg">{game.title}</h3>
+                          <p className="text-sm" style={{ color: "#4B5563" }}>{game.description}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setSelectedGameId(game.id)}
+                            className="p-2 hover:bg-transparent text-[#0047FF]"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteGame(game.id)}
+                            className="p-2 hover:bg-transparent text-[#EF4444]"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </Card>
+
               {/* Create Game */}
               <Card className="p-6 bg-white border border-border rounded-2xl text-black">
                 <h2 className="text-2xl font-bold mb-4">Create New Game</h2>
@@ -761,46 +801,6 @@ const Admin = () => {
                 </form>
               </Card>
 
-              {/* Games List */}
-              <Card className="p-6 bg-white border border-border rounded-2xl text-black">
-                <h2 className="text-2xl font-bold mb-4">Existing Games</h2>
-                {games.length === 0 ? (
-                  <p className="text-muted-foreground">No games yet</p>
-                ) : (
-                  <div className="space-y-3">
-                    {games.map((game) => (
-                      <div
-                        key={game.id}
-                        className="flex items-center justify-between p-4 border border-border rounded-[24px]"
-                      >
-                        <div>
-                          <h3 className="font-bold text-lg">{game.title}</h3>
-                          <p className="text-sm" style={{ color: "#4B5563" }}>{game.description}</p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setSelectedGameId(game.id)}
-                            className="p-2 hover:bg-transparent text-[#0047FF]"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDeleteGame(game.id)}
-                            className="p-2 hover:bg-transparent text-[#EF4444]"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </Card>
-
               {/* Active Game Selection */}
               <Card className="p-6 bg-white border border-border rounded-2xl text-black">
                 <h2 className="text-2xl font-bold mb-4">Set Active Game</h2>
@@ -814,7 +814,7 @@ const Admin = () => {
                     {games.map((game) => (
                       <div
                         key={game.id}
-                        className={`flex items-center justify-between p-4 border rounded-lg transition-colors ${
+                        className={`flex items-center justify-between p-4 border rounded-[24px] transition-colors ${
                           activeGameId === game.id 
                             ? 'border-green-500 bg-green-50' 
                             : 'border-border hover:border-gray-300'
@@ -849,6 +849,77 @@ const Admin = () => {
                   </div>
                 )}
               </Card>
+
+              {/* Questions in Active Game */}
+              {activeGameId && (
+                <Card className="p-6 bg-white border border-border rounded-2xl text-black">
+                  <h2 className="text-2xl font-bold mb-4">
+                    Questions in {games.find(game => game.id === activeGameId)?.title || 'Active Game'}
+                  </h2>
+                  {questions.filter(question => question.game_id === activeGameId).length === 0 ? (
+                    <p className="text-muted-foreground">No questions yet</p>
+                  ) : (
+                    <div className="space-y-3 max-h-96 overflow-y-auto">
+                      {questions.filter(question => question.game_id === activeGameId).map((question) => (
+                        <div
+                          key={question.id}
+                          className="p-4 border border-white rounded-lg"
+                        >
+                          <div className="flex items-start gap-3">
+                            <div className="flex-1">
+                              <div className="flex gap-2 mb-2">
+                                <span className="px-2 py-1 text-xs rounded bg-gray-100 text-gray-700">
+                                  {question.category || 'No category'}
+                                </span>
+                                <span className="px-2 py-1 text-xs rounded bg-blue-100 text-blue-700">
+                                  {question.question_type}
+                                </span>
+                              </div>
+                              <h3 className="font-medium text-sm mb-2">
+                                {question.question_text}
+                              </h3>
+                              {question.question_type === 'multiple_choice' && (
+                                <div className="text-xs text-gray-600 space-y-1">
+                                  <div>A: {question.answer_a}</div>
+                                  <div>B: {question.answer_b}</div>
+                                  <div>C: {question.answer_c}</div>
+                                  {question.answer_d && <div>D: {question.answer_d}</div>}
+                                </div>
+                              )}
+                              <p className="text-xs text-green-600 font-medium mt-2">
+                                Correct: {question.correct_answer}
+                              </p>
+                              {question.explanation && (
+                                <p className="text-xs text-gray-500 mt-1">
+                                  Explanation: {question.explanation}
+                                </p>
+                              )}
+                            </div>
+                            <div className="flex gap-2 flex-shrink-0">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditQuestion(question)}
+                                className="p-2 hover:bg-transparent text-[#0047FF]"
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteQuestion(question.id)}
+                                className="p-2 hover:bg-transparent text-[#EF4444]"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Card>
+              )}
             </div>
 
             {/* Question Management Section */}
